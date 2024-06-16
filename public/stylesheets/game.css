@@ -1,0 +1,227 @@
+@font-face {
+    font-family: "Cubic";
+    src: url("/font/cubic.ttf") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+* {
+    font-family: "Cubic", sans-serif;
+}
+html {
+    width: 100%;
+    height: 100%;
+    user-select: none;
+    touch-action: manipulation;
+}
+body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    background-color: black;
+    font-family: "Cubic", sans-serif;
+}
+.container {
+    display: flex;
+}
+#main-container {
+    width: 1080px;
+    margin: auto;
+    position: relative;
+    justify-content: center;
+    overflow: hidden;
+}
+.bg {
+    z-index: -1000;
+}
+#bg, #result {
+    width: 100%;
+}
+#bg {
+    visibility: hidden;
+}
+#sound {
+    position: absolute;
+    width: 10%;
+    top: 1%;
+    right: 2%;
+    z-index: 500;
+}
+#team {
+    position: absolute;
+    width: 70%;
+    top: 37.5%;
+    z-index: 499;
+}
+#cutscene, #mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+#cutscene {
+    z-index: 1000;
+}
+#cutscene-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    animation-timing-function: ease;
+}
+.fadeInToBlack {
+    animation: fadeInToBlack 1s forwards;
+}
+.fadeOutFromBlack {
+    animation: fadeOutFromBlack 1s forwards;
+}
+@keyframes fadeInToBlack {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes fadeOutFromBlack {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+#bubble {
+    position: absolute;
+    width: 150%;
+    left: -25%;
+    opacity: 0;
+    animation: bubbleFloat 1s backwards;
+    animation-timing-function: ease-in;
+    z-index: 100;
+}
+@keyframes bubbleFloat {
+    0% {
+        opacity: 1;
+        transform: translateY(108%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(-100%);
+    }
+}
+#text1 {
+    position: absolute;
+    width: 80%;
+    top: 60%;
+}
+#text2 {
+    position: absolute;
+    width: 60%;
+    top: 30%;
+}
+#input-container {
+    position: absolute;
+    width: 70%;
+    top: 40%;
+}
+.frame {
+    width: 100%;
+}
+#input-box {
+    position: absolute;
+    width: 92%;
+    height: 74%;
+    margin: 2% 4%;
+    background: transparent;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    text-align: center;
+}
+#bar {
+    position: absolute;
+    width: 40%;
+}
+.bar-layout1 {
+    top: 5%
+}
+.bar-layout2 {
+    bottom: 5%;
+}
+.btn:hover {
+    cursor: pointer;
+}
+#skip-btn {
+    position: absolute;
+    color: white;
+    top: 2%;
+    left: 2%;
+    z-index: 500;
+}
+#btn1, #btn2, #btn3 {
+    position: absolute;
+    width: 43%;
+    top: 80%;
+}
+#btn4, #btn5 {
+    position: absolute;
+    width: 38%;
+    bottom: 2%;
+}
+#btn4 {
+    left: 10%;
+}
+#btn5 {
+    right: 10%
+}
+#btn6 {
+    position: absolute;
+    width: 28%;
+    top: 54.5%;
+    z-index: 500;
+}
+#question-op-container {
+    position: absolute;
+    width: 95%;
+    flex-direction: column;
+    align-items: center;
+}
+.question-container-layout1 {
+    bottom: 7%;
+}
+.question-container-layout2 {
+    top: 7%;
+}
+#question-container {
+    width: 100%;
+    display: flex;
+}
+#question-frame {
+    width: 100%;
+}
+#question-text {
+    position: absolute;
+    width: 86%;
+    margin: 12% 7%;
+}
+#op-btns-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 3%;
+}
+.op-btn {
+    margin: 1%;
+}
+.op-frame {
+    width: 100%;
+    height: 100px;
+}
+.op-text {
+    position: absolute;
+    width: 92%;
+    margin: 2.5% 4%;
+    text-align: center;
+}
+.hidden {
+    display: none;
+}
