@@ -150,13 +150,6 @@ body {
 .btn:hover {
     cursor: pointer;
 }
-#skip-btn {
-    position: absolute;
-    color: white;
-    top: 2%;
-    left: 2%;
-    z-index: 500;
-}
 #btn1, #btn2, #btn3 {
     position: absolute;
     width: 43%;
@@ -178,6 +171,19 @@ body {
     width: 28%;
     top: 54.5%;
     z-index: 500;
+}
+#btn7 {
+    position: absolute;
+    width: 30%;
+    top: 2%;
+    left: 2%;
+    z-index: 500;
+}
+#btn8 {
+    position: absolute;
+    width: 8%;
+    top: 4%;
+    right: 10%;
 }
 #question-op-container {
     position: absolute;

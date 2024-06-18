@@ -20,13 +20,14 @@ document.addEventListener("DOMContentLoaded", function(){
     const $inputContainer = document.querySelector("#input-container");
     const $inputBox = document.querySelector("#input-box");
     const $bar = document.querySelector("#bar");
-    const $skipBtn = document.querySelector("#skip-btn");
     const $btn1 = document.querySelector("#btn1");
     const $btn2 = document.querySelector("#btn2");
     const $btn3 = document.querySelector("#btn3");
     const $btn4 = document.querySelector("#btn4");
     const $btn5 = document.querySelector("#btn5");
     const $btn6 = document.querySelector("#btn6");
+    const $btn7 = document.querySelector("#btn7");
+    const $btn8 = document.querySelector("#btn8");
     const $questionOpContainer = document.querySelector("#question-op-container");
     const $questionFrame = document.querySelector("#question-frame");
     const $questionText = document.querySelector("#question-text");
@@ -142,9 +143,9 @@ document.addEventListener("DOMContentLoaded", function(){
                 $bg.loop = false;
                 toggleVisibility($text2);
                 toggleVisibility($inputContainer);
-                toggleVisibility($skipBtn);
+                toggleVisibility($btn7);
                 toggleVisibility($btn2);
-                $skipBtn.style.fontSize = `${$mainContainer.offsetWidth/12}px`;
+                $btn7.style.fontSize = `${$mainContainer.offsetWidth/12}px`;
 
                 handleVideoEndedWrapper = function() {
                     fn3();
@@ -166,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function(){
             $bg.src = "/media/bg4.mp4";
             $bg.loop = true;
             toggleVisibility($mask);
-            toggleVisibility($skipBtn);
+            toggleVisibility($btn7);
             toggleVisibility($bar);
 
             $questionText.innerText = questions[0].question;
@@ -214,19 +215,14 @@ document.addEventListener("DOMContentLoaded", function(){
                 $bgm4.play();
             }
 
-            if (currentQuestion === 4){
-                $opText4.innerText = questions[currentQuestion].options[3].text;
-                $opBtn4.classList.remove("hidden");
-            }
-
-            if (currentQuestion === 1){
+            if (currentQuestion === 1 | currentQuestion === 5){
                 $mask.src = "/media/mask2.png";
                 $questionOpContainer.classList.toggle("question-container-layout1");
                 $questionOpContainer.classList.toggle("question-container-layout2");
                 $bar.classList.toggle("bar-layout1");
                 $bar.classList.toggle("bar-layout2");
             }
-            if (currentQuestion === 3){
+            if (currentQuestion === 2 | currentQuestion === 6){
                 $mask.src = "/media/mask1.png";
                 $questionOpContainer.classList.toggle("question-container-layout1");
                 $questionOpContainer.classList.toggle("question-container-layout2");
@@ -268,6 +264,7 @@ document.addEventListener("DOMContentLoaded", function(){
             toggleVisibility($btn4);
             toggleVisibility($btn5);
             toggleVisibility($btn6);
+            toggleVisibility($btn8);
         });
     }
 
@@ -294,21 +291,14 @@ document.addEventListener("DOMContentLoaded", function(){
 
         if (navigator.share) {
             navigator.share({
-                title: "result",
-                files: [file],
-            }).then(() => {
-                console.log('Share was successful.');
-            }).catch((error) => {
-                console.log('Sharing failed', error);
-            });
-        } else {
-            console.log('Web Share API is not supported in your browser.');
+                files: [file]
+            })
         }
     }
 
     $bg.addEventListener("play", setBgAsBottomLayer);
     $sound.addEventListener("click", toggleMute);
-    $skipBtn.addEventListener("click", () => {
+    $btn7.addEventListener("click", () => {
         fn3();
     });
     $btn1.addEventListener("click", () => {
@@ -348,7 +338,7 @@ document.addEventListener("DOMContentLoaded", function(){
         $inputBox.style.fontSize = `${$mainContainer.offsetWidth/18}px`;
         $questionFrame.style.height = `${$mainContainer.offsetWidth/3}px`;
         $questionText.style.fontSize = `${$mainContainer.offsetWidth/24}px`;
-        $skipBtn.style.fontSize = `${$mainContainer.offsetWidth/12}px`;
+        $btn7.style.fontSize = `${$mainContainer.offsetWidth/12}px`;
         $opFrame1.style.height = `${$mainContainer.offsetWidth*2.5/27}px`;
         $opFrame2.style.height = `${$mainContainer.offsetWidth*2.5/27}px`;
         $opFrame3.style.height = `${$mainContainer.offsetWidth*2.5/27}px`;
