@@ -42,7 +42,7 @@ export const questions = [
                 "effect": "adventure"
             },
             {
-                "text": "組織一個小隊，一起進行探索",
+                "text": "先問問朋友怎麼去再說",
                 "effect": "social"
             },
             {
@@ -52,7 +52,7 @@ export const questions = [
         ]
     },
     {
-        "question": "洞穴門口需要解開一個古老的謎題來進入，你會…?",
+        "question": "洞穴門口需要解開一個古老的石碑才能進入，你會…?",
         "options": [
             {
                 "text": "不同角度思考嘗試多種可能的解法",
@@ -72,7 +72,7 @@ export const questions = [
         "options": [
             {
                 "text": "RAP",
-                "effect": "intuition"
+                "effect": "adventure"
             },
             {
                 "text": "流行",
@@ -82,6 +82,11 @@ export const questions = [
                 "text": "金屬",
                 "effect": "emotion"
             },
+      {
+                "text": "龐克",
+                "effect": "intuition"
+            },
+
         ]
     },
     {
@@ -105,24 +110,24 @@ export const questions = [
         "question": "鯊魚突然跑入攻擊大眾，你會...?",
         "options": [
             {
-                "text": "不畏困難迎接挑戰，站出來保護大家",
+                "text": "展示自己的能力對抗",
                 "effect": "adventure"
             },
             {
-                "text": "與其他人一起制定計劃，共同面對挑戰",
+                "text": "招呼眾人一起出戰",
                 "effect": "social"
             },
             {
-                "text": "冷靜分析局勢，思考如何對付鯊魚",
+                "text": "分析如何對付",
                 "effect": "strategy"
             }
         ]
     },
     {
-        "question": " 最後你需要運用力量來啟動音樂之石，擊退鯊魚保護港動王國，你會...？",
+        "question": " 最後你需要運用力量來啟動音樂之石，擊退保護港動王國，你會...？",
         "options": [
             {
-                "text": "與音樂之石產生深刻的共鳴，用心靈的力量啟動",
+                "text": "用心靈的力量來啟動音樂之石",
                 "effect": "emotion"
             },
             {
@@ -130,7 +135,7 @@ export const questions = [
                 "effect": "social"
             },
             {
-                "text": "用直覺來引導力量的輸出，不拘泥於固定的方法",
+                "text": "用直覺來引導內心共鳴",
                 "effect": "intuition"
             }
         ]

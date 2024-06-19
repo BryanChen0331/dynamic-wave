@@ -215,6 +215,11 @@ document.addEventListener("DOMContentLoaded", function(){
                 $bgm4.play();
             }
 
+            if (currentQuestion === 4){
+                $opText4.innerText = questions[currentQuestion].options[3].text;
+                $opBtn4.classList.remove("hidden");
+            }
+
             if (currentQuestion === 1 | currentQuestion === 5){
                 $mask.src = "/media/mask2.png";
                 $questionOpContainer.classList.toggle("question-container-layout1");
