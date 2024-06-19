@@ -47,7 +47,10 @@ document.addEventListener("DOMContentLoaded", function(){
     let isMuted = false;
     let currentQuestion = 0;
     let userName;
+    let character;
     let handleVideoEndedWrapper;
+
+    const options = [];
 
     const attributes = {
         adventure: 0,
@@ -58,8 +61,10 @@ document.addEventListener("DOMContentLoaded", function(){
         intuition: 0
     };
 
+    const CharacterNames = ["健力龍蝦", "海馬騎士", "鼓手海葵", "RAP河豚", "後搖海豚", "DJ章魚"]
+
     function generateCharacter(attributes){
-        const attributeToCharacter = {
+        const attributeToCode = {
             adventure: 1,
             social: 2,
             creativity: 3,
@@ -71,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function(){
         const max_value = Math.max(...Object.values(attributes));
         const highest_attributes = Object.keys(attributes).filter(attr => attributes[attr] === max_value);
         const selected_attribute = highest_attributes[Math.floor(Math.random() * highest_attributes.length)];
-        const characterCode = attributeToCharacter[selected_attribute];
+        const characterCode = attributeToCode[selected_attribute];
         
         return characterCode;
     }
@@ -190,6 +195,8 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     function nextQuestion(option){
+        options.push(option+1);
+
         toNextPage(() => {
             $opBtn4.classList.add("hidden");
 
@@ -239,6 +246,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
     function fn4(){
         const characterCode = generateCharacter(attributes);
+        character = CharacterNames[characterCode-1];
 
         const img = new Image();
         img.onload = () => {
@@ -259,6 +267,15 @@ document.addEventListener("DOMContentLoaded", function(){
         } else {
             $team.src = "/media/team2.png";
         }
+
+        const data = {
+            userName,
+            options,
+            attributes,
+            character
+        }
+
+        postData(data);
 
         toNextPage(() => {
             $bgm4.pause();
@@ -301,12 +318,41 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
 
+    async function addCount(){
+        try {
+            await fetch("https://www.dynamicwave.org/api/counter", {
+                method: "POST"
+            });
+        } catch {
+            console.log("counter error.");
+        }
+    }
+
+    async function postData(data){
+        try {
+            const response = await fetch("https://www.dynamicwave.org/api/data", {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            });
+        
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+        } catch (error) {
+            console.error('Error sending data to server:', error);
+        }
+    }
+
     $bg.addEventListener("play", setBgAsBottomLayer);
     $sound.addEventListener("click", toggleMute);
     $btn7.addEventListener("click", () => {
         fn3();
     });
     $btn1.addEventListener("click", () => {
+        addCount();
         $bgm1.play();
         $bgm2.play();
         $bgm2.onended = fn1();
