@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function(){
     let currentQuestion = 0;
     let userName;
     let character;
+    let team;
     let handleVideoEndedWrapper;
 
     const options = [];
@@ -63,7 +64,13 @@ document.addEventListener("DOMContentLoaded", function(){
 
     const CharacterNames = ["健力龍蝦", "海馬騎士", "鼓手海葵", "RAP河豚", "後搖海豚", "DJ章魚"]
 
-    function generateCharacter(attributes){
+    async function getBlueRatio(){
+        const response = await fetch("http://127.0.0.1:3000/api/blueRatio");
+        const data = await response.json();
+        return data.blueRatio;
+    }
+
+    async function generateCharacter(attributes){
         const attributeToCode = {
             adventure: 1,
             social: 2,
@@ -73,8 +80,21 @@ document.addEventListener("DOMContentLoaded", function(){
             intuition: 6
         };
 
-        const max_value = Math.max(...Object.values(attributes));
-        const highest_attributes = Object.keys(attributes).filter(attr => attributes[attr] === max_value);
+        const tempAttr = {...attributes};
+
+        const blueRatio = await getBlueRatio();
+
+        if (blueRatio > 0.6) {
+            tempAttr.social = -1;
+            tempAttr.creativity = -1;
+            tempAttr.emotion = -1;
+        } else if (blueRatio < 0.4) {
+            tempAttr.adventure = -1;
+            tempAttr.strategy = -1;
+            tempAttr.intuition = -1;
+        }
+        const max_value = Math.max(...Object.values(tempAttr));
+        const highest_attributes = Object.keys(tempAttr).filter(attr => tempAttr[attr] === max_value);
         const selected_attribute = highest_attributes[Math.floor(Math.random() * highest_attributes.length)];
         const characterCode = attributeToCode[selected_attribute];
         
@@ -244,8 +264,8 @@ document.addEventListener("DOMContentLoaded", function(){
         });
     }
 
-    function fn4(){
-        const characterCode = generateCharacter(attributes);
+    async function fn4(){
+        const characterCode = await generateCharacter(attributes);
         character = CharacterNames[characterCode-1];
 
         const img = new Image();
@@ -259,12 +279,13 @@ document.addEventListener("DOMContentLoaded", function(){
     
             ctx.fillText(userName, 540, 90);
         };
-    
         img.src = `/media/result${characterCode}.png`;
 
         if ([2, 3, 6].includes(characterCode)) {
+            team = "blue";
             $team.src = "/media/team1.png";
         } else {
+            team = "yello";
             $team.src = "/media/team2.png";
         }
 
@@ -272,7 +293,8 @@ document.addEventListener("DOMContentLoaded", function(){
             userName,
             options,
             attributes,
-            character
+            character,
+            team
         }
 
         postData(data);
@@ -319,31 +341,19 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     async function addCount(){
-        try {
-            await fetch("https://www.dynamicwave.org/api/counter", {
-                method: "POST"
-            });
-        } catch {
-            console.log("counter error.");
-        }
+        await fetch("http://127.0.0.1:3000/api/counter", {
+            method: "POST"
+        });
     }
 
     async function postData(data){
-        try {
-            const response = await fetch("https://www.dynamicwave.org/api/data", {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(data)
-            });
-        
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-        } catch (error) {
-            console.error('Error sending data to server:', error);
-        }
+        await fetch("http://127.0.0.1:3000/api/data", {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
     }
 
     $bg.addEventListener("play", setBgAsBottomLayer);
