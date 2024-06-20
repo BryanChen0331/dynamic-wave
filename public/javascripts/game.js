@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function(){
     const CharacterNames = ["健力龍蝦", "海馬騎士", "鼓手海葵", "RAP河豚", "後搖海豚", "DJ章魚"]
 
     async function getBlueRatio(){
-        const response = await fetch("https://dynamicwave/api/blueRatio");
+        const response = await fetch("https://dynamicwave.org/api/blueRatio");
         const data = await response.json();
         return data.blueRatio;
     }
@@ -341,13 +341,13 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     async function addCount(){
-        await fetch("https://www.dynamicwave/api/counter", {
+        await fetch("https://dynamicwave.org/api/counter", {
             method: "POST"
         });
     }
 
     async function postData(data){
-        await fetch("https://www.dynamicwave/api/data", {
+        await fetch("https://dynamicwave.org/api/data", {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
