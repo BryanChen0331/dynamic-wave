@@ -46,6 +46,9 @@ const getNewId = () => {
 
 const calculateBlueRatio = (data) => {
   const totalItems = data.length;
+  if(totalItems === 0){
+    return 0.5;
+  }
   const blueCount = data.filter(item => item.team === 'blue').length;
   return blueCount / totalItems;
 };
