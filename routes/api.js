@@ -41,14 +41,14 @@ const getUTCTimePlus8 = () => {
 
 const getNewId = () => {
   data = readData();
-  return data[0].id + 1 || 1;
+  if (data.length === 0){
+    return 1;
+  }
+  return data[0].id + 1;
 }
 
 const calculateBlueRatio = (data) => {
   const totalItems = data.length;
-  if(totalItems === 0){
-    return 0.5;
-  }
   const blueCount = data.filter(item => item.team === 'blue').length;
   return blueCount / totalItems;
 };
@@ -80,7 +80,6 @@ router.post("/data", (req, res) => {
   writeData(data);
 
   const blueRatio = calculateBlueRatio(data);
-  console.log(blueRatio);
   writeBlueRatio(blueRatio);
 });
 
