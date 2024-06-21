@@ -280,8 +280,6 @@ document.addEventListener("DOMContentLoaded", function(){
 
         const img = new Image();
         img.onload = () => {
-            $result.width = 1080;
-            $result.height = 1920;
             ctx.drawImage(img, 0, 0);
             ctx.font = "54px Cubic";
             ctx.fillStyle = "rgb(92, 53, 3)";
@@ -289,6 +287,9 @@ document.addEventListener("DOMContentLoaded", function(){
     
             ctx.fillText(userName, 540, 90);
         };
+        
+        $result.width = 1080;
+        $result.height = 1920;
         img.src = `/media/result${characterCode}.png`;
 
         if ([2, 3, 6].includes(characterCode)) {
