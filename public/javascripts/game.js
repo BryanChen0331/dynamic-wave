@@ -376,15 +376,15 @@ document.addEventListener("DOMContentLoaded", function(){
         addCount();
         $bgm1.play();
         $bgm2.play();
-        $bgm2.onended = fn1();
+        fn1();
     });
     $btn2.addEventListener("click", () => {
         $bgm2.play();
-        $bgm2.onended = fn2();
+        fn2();
     });
     $btn3.addEventListener("click", () => {
         $bgm5.play();
-        $bgm5.onended = fn4();
+        fn4();
     });
     $btn4.addEventListener("click", () => {
         $bgm2.play();
@@ -394,7 +394,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
     $btn5.addEventListener("click", () => {
         $bgm2.play();
-        $bgm2.onended = shareImage();
+        shareImage();
     });
     $btn6.addEventListener("click", () => {
         $bgm2.play();
