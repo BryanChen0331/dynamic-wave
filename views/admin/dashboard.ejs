@@ -7,7 +7,32 @@
 </head>
 <body>
     <h1>Admin Dashboard</h1>
-    <button onclick="location.href='/admin/competition'">活動競賽</button>
-    <button onclick="location.href='/admin/user-query'">查詢用戶</button>
+    <button onclick="location.href='/admin/competition'">Competition Score</button>
+    <br><br>
+    <button onclick="location.href='/admin/data'">User Data</button>
+    <br><br>
+    <button onclick="location.href='/admin/log'">Score Submit Log</button>
+    <br><br>
+
+    <hr>
+
+    <br>
+    <button id="logout-button">Logout</button>
 </body>
+<script>
+    document.getElementById('logout-button').addEventListener('click', function() {
+      fetch('/admin/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        if (response.redirected) {
+          window.location.href = "/admin/login";
+        }
+      }).catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
 </html>

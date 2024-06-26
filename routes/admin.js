@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-/* Admin login middleware */
-function checkSessionMidleware(req, res, next) {
+function checkSessionMiddleware(req, res, next) {
   console.log(req.session.username);
   if (req.session.username) {
     return next();
@@ -10,12 +9,10 @@ function checkSessionMidleware(req, res, next) {
   res.redirect('/admin/login');
 }
 
-/* GET admin login page. */
 router.get('/login', function(req, res, next) {
   res.render('admin/login', { title: 'Admin Login' });
 });
 
-/* POST admin login page. */
 router.post('/login', function(req, res, next) {
   const { username, password } = req.body;
   if (username === 'admin' && password === 'password') {
@@ -26,19 +23,29 @@ router.post('/login', function(req, res, next) {
   }
 });
 
-/* Admin dashboard */
-router.get('/', checkSessionMidleware, function(req, res, next) {
+router.get('/', checkSessionMiddleware, function(req, res, next) {
   res.render('admin/dashboard', { title: 'Admin Dashboard' });
 });
 
-/* GET competition page */
-router.get('/competition', checkSessionMidleware, function(req, res, next) {
-  res.render('admin/competition', { title: 'Competition' });
+router.get('/competition', checkSessionMiddleware, function(req, res, next) {
+  res.render('admin/competition');
 });
 
-/* GET user query page */
-router.get('/user-query', checkSessionMidleware, function(req, res, next) {
-  res.render('admin/user-query', { title: 'User Query' });
+router.get('/data', checkSessionMiddleware, (req, res) => {
+  res.render('admin/data');
+});
+
+router.get('/log', checkSessionMiddleware, function(req, res, next) {
+  res.render('admin/log');
+});
+
+router.post('/logout', function(req, res, next) {
+  req.session.destroy(function(err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/admin/login');
+  });
 });
 
 module.exports = router;

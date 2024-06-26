@@ -1,5 +1,5 @@
 {
-  "name": "hello-world",
+  "name": "dynamic-wave",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -15,7 +15,6 @@
     "express-session": "^1.18.0",
     "http-errors": "~1.6.3",
     "moment-timezone": "^0.5.45",
-    "mongodb": "^6.7.0",
     "mongoose": "^8.4.3",
     "morgan": "~1.9.1"
   }

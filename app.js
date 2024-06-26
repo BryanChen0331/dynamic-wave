@@ -33,6 +33,27 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false }
 }));
+app.use((req, res, next) => {
+  res.locals.baseUrl = `${req.protocol}://${req.get('host')}`;
+  next();
+});
+app.use('/sse', (req, res, next) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive'
+  });
+  res.write('\n');
+
+  if (!app.locals.sseClients) {
+    app.locals.sseClients = new Set();
+  }
+  app.locals.sseClients.add(res);
+
+  req.on('close', () => {
+    app.locals.sseClients.delete(res);
+  });
+});
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
