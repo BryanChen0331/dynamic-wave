@@ -64,16 +64,10 @@ document.addEventListener("DOMContentLoaded", function(){
 
     const CharacterNames = ["健力龍蝦", "海馬騎士", "鼓手海葵", "RAP河豚", "後搖海豚", "DJ章魚"]
 
-    async function getBlueRatio(){
+    async function fetchBlueRatio(){
         const response = await fetch("/api/blueRatio");
         const data = await response.json();
         return data.blueRatio;
-    }
-
-    async function getCount(){
-        const response = await fetch("/api/counter");
-        const data = await response.json();
-        return data.count;
     }
 
     async function generateCharacter(attributes){
@@ -88,19 +82,16 @@ document.addEventListener("DOMContentLoaded", function(){
 
         const tempAttr = {...attributes};
 
-        const count = await getCount();
-        const blueRatio = await getBlueRatio();
+        const blueRatio = await fetchBlueRatio();
 
-        if (count > 100) {
-            if (blueRatio > 0.6) {
-                tempAttr.social = -1;
-                tempAttr.creativity = -1;
-                tempAttr.intuition = -1;
-            } else if (blueRatio < 0.4) {
-                tempAttr.adventure = -1;
-                tempAttr.strategy = -1;
-                tempAttr.emotion = -1;
-            }
+        if (blueRatio > 0.6) {
+            tempAttr.social = -1;
+            tempAttr.creativity = -1;
+            tempAttr.intuition = -1;
+        } else if (blueRatio < 0.4) {
+            tempAttr.adventure = -1;
+            tempAttr.strategy = -1;
+            tempAttr.emotion = -1;
         }
         
         const max_value = Math.max(...Object.values(tempAttr));
@@ -296,7 +287,7 @@ document.addEventListener("DOMContentLoaded", function(){
             team = "blue";
             $team.src = "/media/team1.png";
         } else {
-            team = "yello";
+            team = "yellow";
             $team.src = "/media/team2.png";
         }
 
@@ -351,12 +342,6 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
 
-    async function addCount(){
-        await fetch("/api/counter", {
-            method: "POST"
-        });
-    }
-
     async function postData(data){
         await fetch("/api/data", {
             method: 'POST',
@@ -373,7 +358,6 @@ document.addEventListener("DOMContentLoaded", function(){
         fn3();
     });
     $btn1.addEventListener("click", () => {
-        addCount();
         $bgm1.play();
         $bgm2.play();
         fn1();
@@ -426,4 +410,6 @@ document.addEventListener("DOMContentLoaded", function(){
     $bg.style.visibility = "visible";
     toggleVisibility($text1);
     toggleVisibility($btn1);
+    $result.width = "300px";
+    $result.height = "150px";
 });

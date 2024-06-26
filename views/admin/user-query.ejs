@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <script type="module" src="/javascripts/user-query.js"></script>
+</head>
+<body>
+    <h1>User Query Page</h1>
+    <form id="query-form">
+        <label for="order-id">訂單編號:</label>
+        <input type="text" id="order-id" name="order-id" required>
+        <label for="user-name">用戶名稱:</label>
+        <input type="text" id="user-name" name="user-name" required>
+        <button type="submit">查詢</button>
+    </form>
+    <div id="query-result" class="hidden"></div>
+</body>
+</html>
