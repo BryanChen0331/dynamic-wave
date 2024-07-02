@@ -5,6 +5,11 @@
     font-style: normal;
 }
 
+html {
+    user-select: none;
+    touch-action: manipulation;
+}
+
 a {
     text-decoration: none;
     color: inherit;
