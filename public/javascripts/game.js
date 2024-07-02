@@ -64,6 +64,16 @@ document.addEventListener("DOMContentLoaded", function(){
 
     const CharacterNames = ["健力龍蝦", "海馬騎士", "鼓手海葵", "RAP河豚", "後搖海豚", "DJ章魚"]
 
+    const debounce = (func, delay) => {
+        let debounceTimer;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => func.apply(context, args), delay);
+        }
+    }
+
     async function fetchBlueRatio(){
         const response = await fetch("/api/blueRatio");
         const data = await response.json();
@@ -125,6 +135,8 @@ document.addEventListener("DOMContentLoaded", function(){
             isMuted = true;
         }
     }
+
+    const debounceToggleMute = debounce(toggleMute, 300);
     
     function toNextPage(callback){
         function handleFirstAnimationEndWrapper() {
@@ -266,6 +278,8 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     async function fn4(){
+        $btn3.removeEventListener("click", fn4);
+
         const characterCode = await generateCharacter(attributes);
         character = CharacterNames[characterCode-1];
 
@@ -342,6 +356,8 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
 
+    const debounceShareImage = debounce(shareImage, 300)
+
     async function postData(data){
         await fetch("/api/data", {
             method: 'POST',
@@ -353,7 +369,7 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     $bg.addEventListener("play", setBgAsBottomLayer);
-    $sound.addEventListener("click", toggleMute);
+    $sound.addEventListener("click", debounceToggleMute);
     $btn7.addEventListener("click", () => {
         fn3();
     });
@@ -368,8 +384,8 @@ document.addEventListener("DOMContentLoaded", function(){
     });
     $btn3.addEventListener("click", () => {
         $bgm5.play();
-        fn4();
     });
+    $btn3.addEventListener("click", fn4);
     $btn4.addEventListener("click", () => {
         $bgm2.play();
         $bgm2.onended = () => {
@@ -378,7 +394,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
     $btn5.addEventListener("click", () => {
         $bgm2.play();
-        shareImage();
+        debounceShareImage();
     });
     $btn6.addEventListener("click", () => {
         $bgm2.play();

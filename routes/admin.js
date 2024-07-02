@@ -39,7 +39,7 @@ router.get('/log', checkSessionMiddleware, function(req, res, next) {
   res.render('admin/log');
 });
 
-router.post('/logout', function(req, res, next) {
+router.post('/logout', checkSessionMiddleware, function(req, res, next) {
   req.session.destroy(function(err) {
     if (err) {
       return next(err);
