@@ -1,51 +1,20 @@
 const express = require("express");
 const router = express.Router();
+const adminController = require("../controllers/adminController");
+const checkSessionMiddleware = require("../middlewares/authMiddleware");
 
-function checkSessionMiddleware(req, res, next) {
-  console.log(req.session.username);
-  if (req.session.username) {
-    return next();
-  }
-  res.redirect("/admin/login");
-}
+router.get("/login", adminController.loginPage);
 
-router.get("/login", function (req, res) {
-  res.render("admin/login", { title: "Admin Login" });
-});
+router.post("/login", adminController.login);
 
-router.post("/login", function (req, res) {
-  const { username, password } = req.body;
-  if (username === "admin" && password === "password") {
-    req.session.username = "admin";
-    res.redirect("/admin");
-  } else {
-    res.redirect("/admin/login");
-  }
-});
+router.get("/", checkSessionMiddleware, adminController.dashboard);
 
-router.get("/", checkSessionMiddleware, function (req, res) {
-  res.render("admin/dashboard", { title: "Admin Dashboard" });
-});
+router.get("/competition", checkSessionMiddleware, adminController.competition);
 
-router.get("/competition", checkSessionMiddleware, function (req, res) {
-  res.render("admin/competition");
-});
+router.get("/data", checkSessionMiddleware, adminController.data);
 
-router.get("/data", checkSessionMiddleware, (req, res) => {
-  res.render("admin/data");
-});
+router.get("/log", checkSessionMiddleware, adminController.log);
 
-router.get("/log", checkSessionMiddleware, function (req, res) {
-  res.render("admin/log");
-});
-
-router.post("/logout", checkSessionMiddleware, function (req, res, next) {
-  req.session.destroy(function (err) {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/admin/login");
-  });
-});
+router.post("/logout", checkSessionMiddleware, adminController.logout);
 
 module.exports = router;
