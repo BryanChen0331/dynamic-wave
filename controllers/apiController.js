@@ -8,12 +8,12 @@ const getLatestTotals = async () => {
     {
       $facet: {
         blueTotal: [
-          { $match: { team: "blue" } },
+          { $match: { team: "blue", isDeleted: false } },
           { $group: { _id: null, total: { $sum: "$score" } } },
           { $project: { _id: 0, total: 1 } }
         ],
         yellowTotal: [
-          { $match: { team: "yellow" } },
+          { $match: { team: "yellow", isDeleted: false } },
           { $group: { _id: null, total: { $sum: "$score" } } },
           { $project: { _id: 0, total: 1 } }
         ]
@@ -54,9 +54,22 @@ exports.postData = async (req, res) => {
   }
 };
 
+exports.deleteData = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updatedData = await Data.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+    if (!updatedData) {
+      return res.status(404).json({ message: "Data not found" });
+    }
+    res.json(updatedData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 exports.getData = async (req, res) => {
   try {
-    const datas = await Data.find().sort({ time: -1 });
+    const datas = await Data.find({ isDeleted: false }).sort({ time: -1 });
     res.json(datas);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -89,7 +102,7 @@ exports.getBlueRatio = async (req, res) => {
 
 exports.getScoreRecord = async (req, res) => {
   try {
-    const scores = await Score.find().sort({ time: -1 });
+    const scores = await Score.find({ isDeleted: false }).sort({ time: -1 });
     res.json(scores);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -111,6 +124,22 @@ exports.postScoreRecord = async (req, res) => {
   } catch (error) {
     console.error("Error saving score:", error);
     res.status(500).json({ message: "Failed to submit score", error });
+  }
+};
+
+exports.deleteScoreRecord = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(req.params);
+    const updatedScore = await Score.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+    if (updatedScore) {
+      res.status(200).json({ message: "Score deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Score not found" });
+    }
+  } catch (error) {
+    console.error("Error deleting score record:", error);
+    res.status(500).json({ message: "Error deleting score record" });
   }
 };
 

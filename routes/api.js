@@ -9,11 +9,15 @@ router.post("/data", apiController.postData);
 
 router.get("/data", checkSessionMiddleware, apiController.getData);
 
+router.patch("/data/:id", checkSessionMiddleware, apiController.deleteData);
+
 router.get("/blue-ratio", apiController.getBlueRatio);
 
 router.get("/score-record", checkSessionMiddleware, apiController.getScoreRecord);
 
 router.post("/score-record", checkSessionMiddleware, apiController.postScoreRecord);
+
+router.patch("/score-record/:id", checkSessionMiddleware, apiController.deleteScoreRecord);
 
 router.get("/total-score", apiController.getTotalScore);
 

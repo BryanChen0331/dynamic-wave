@@ -1,45 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>
-    <%= title %>
-  </title>
+  <title>活動競賽</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    select,
+    input {
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007BFF;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      text-align: center;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    hr {
+      margin: 20px 0;
+      border: none;
+      border-top: 1px solid #ccc;
+    }
+
+    #totals {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #ccc;
+    }
+
+    #totals h2 {
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    #totals p {
+      margin: 5px 0;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Submit Competition Score</h1>
-  <form id="competitionForm">
-    <label for="competition">Select Competition:</label>
-    <select id="competition" name="competition">
-      <option value="competition1">Competition 1</option>
-      <option value="competition2">Competition 2</option>
-      <option value="competition3">Competition 3</option>
-      <!-- Add more competition options as needed -->
-    </select>
-    <br><br>
+  <div class="container">
+    <h1>活動競賽</h1>
+    <form id="competitionForm">
+      <label for="competition">競賽項目:</label>
+      <select id="competition" name="competition">
+        <option value="巨型排球賽">巨型排球賽</option>
+        <option value="戰馬大亂鬥">戰馬大亂鬥</option>
+        <option value="羽球大爆射">羽球大爆射</option>
+        <option value="網球九宮格">網球九宮格</option>
+        <option value="尋找最初の港動">尋找最初の港動</option>
+        <option value="浪花四濺">浪花四濺</option>
+        <option value="神港集兵">神港集兵</option>
+        <option value="滑溜保齡球">滑溜保齡球</option>
+        <option value="你還港動?!">你還港動?!</option>
+      </select>
 
-    <label for="team">Select Team:</label>
-    <select id="team" name="team">
-      <option value="blue">Blue Team</option>
-      <option value="yellow">Yellow Team</option>
-      <!-- Add more team options as needed -->
-    </select>
-    <br><br>
+      <label for="team">隊伍:</label>
+      <select id="team" name="team">
+        <option value="blue">藍隊</option>
+        <option value="yellow">黃隊</option>
+      </select>
 
-    <label for="score">Enter Score:</label>
-    <input type="number" id="score" name="score" required>
-    <br><br>
+      <label for="score">請輸入分數:</label>
+      <input type="number" id="score" name="score" required min="-100" max="100">
 
-    <button type="submit">Submit</button>
-    <br><br>
-
-    <hr>
-
-    <div id="totals"></div>
-  </form>
+      <button type="submit">提交</button>
+    </form>
+    <div id="totals">
+      <h2>即時比分</h2>
+      <p>藍隊: <span id="blueTotal">0</span></p>
+      <p>黃隊: <span id="yellowTotal">0</span></p>
+    </div>
+  </div>
 
   <script>
     document.querySelector("#competitionForm").addEventListener("submit", async (e) => {
@@ -61,39 +145,33 @@
         });
 
         if (response.ok) {
-          alert("Score submitted successfully!");
+          alert("資料提交成功。");
         } else {
-          alert("Failed to submit score");
+          alert("資料提交失敗。");
         }
       } catch (error) {
         console.error("Error submitting score:", error);
-        alert("Error submitting score");
+        alert("無法提交資料，請稍後再試。");
       }
     });
 
-
-
-
-    const totalsDiv = document.querySelector("#totals");
+    const blueTotalElement = document.getElementById("blueTotal");
+    const yellowTotalElement = document.getElementById("yellowTotal");
 
     const eventSource = new EventSource("/sse");
 
     eventSource.onmessage = function (event) {
       const totals = JSON.parse(event.data);
-      updateTotals(totals);
+      blueTotalElement.textContent = totals.blueTotal;
+      yellowTotalElement.textContent = totals.yellowTotal;
     };
-
-    function updateTotals(totals) {
-      totalsDiv.innerHTML = `
-        <h2>Total Score</h2>
-        <p>Blue Team: ${totals.blueTotal}</p>
-        <p>Yellow Team: ${totals.yellowTotal}</p>
-      `;
-    }
 
     fetch("/api/total-score")
       .then(response => response.json())
-      .then(updateTotals);
+      .then(totals => {
+        blueTotalElement.textContent = totals.blueTotal;
+        yellowTotalElement.textContent = totals.yellowTotal;
+      });
   </script>
 </body>
 

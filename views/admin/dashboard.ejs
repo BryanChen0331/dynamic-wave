@@ -1,30 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>
-    <%= title %>
-  </title>
+  <title>後台首頁</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    button {
+      display: block;
+      padding: 12px 24px;
+      margin: 10px auto;
+      border: none;
+      border-radius: 4px;
+      background-color: #007BFF;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      text-align: center;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    hr {
+      margin: 20px 0;
+      border: none;
+      border-top: 1px solid #ccc;
+    }
+
+    #sign-out-btn {
+      background-color: #dc3545;
+    }
+
+    #sign-out-btn:hover {
+      background-color: #bd2130;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Admin Dashboard</h1>
-  <button onclick="location.href='/admin/competition'">Competition Score</button>
-  <br><br>
-  <button onclick="location.href='/admin/data'">User Data</button>
-  <br><br>
-  <button onclick="location.href='/admin/score'">Score Submit Log</button>
-  <br><br>
-  <button onclick="location.href='/admin/sign-in-history'">Login History</button>
-  <br><br>
-
-  <hr>
-
-  <br>
-  <button id="sign-out-btn">Logout</button>
+  <div class="container">
+    <h1>後台首頁</h1>
+    <button onclick="location.href='/admin/competition'">競賽活動</button>
+    <button onclick="location.href='/admin/data'">測驗資料</button>
+    <button onclick="location.href='/admin/score'">積分紀錄</button>
+    <button onclick="location.href='/admin/sign-in-history'">登入紀錄</button>
+    <hr>
+    <button id="sign-out-btn">登出</button>
+  </div>
 </body>
+
 <script>
   document.querySelector("#sign-out-btn").addEventListener("click", function () {
     fetch("/admin/sign-out", {

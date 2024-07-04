@@ -1,51 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Signin</title>
+  <title>管理員登入</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .button-container button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #007BFF;
+      color: #fff;
+      transition: background-color 0.3s ease;
+    }
+
+    .button-container button:hover {
+      background-color: #0056b3;
+    }
+
+    .button-container button.register {
+      background-color: #28a745;
+    }
+
+    .button-container button.register:hover {
+      background-color: #218838;
+    }
+
     .error-message {
       color: red;
+      text-align: center;
+      margin-top: 15px;
     }
   </style>
 </head>
-<body>
-  <h1>Admin Signin</h1>
-  <form id="sign-in-form" action="/admin/sign-in" method="post">
-    <label for="username">Username:</label>
-    <input id="username" type="text" name="username" required>
-    <br><br>
-    <label for="password">Password:</label>
-    <input id="password" type="password" name="password" required>
-    <br><br>
-    <button id="submit-btn" type="submit">Sign In</button>
-    <br><br>
-    <div id="error-message" class="error-message"></div>
-  </form>
 
+<body>
+  <div class="container">
+    <h1>管理員登入</h1>
+    <form id="sign-in-form" action="/admin/sign-in" method="post">
+      <div class="form-group">
+        <label for="username">用戶名:</label>
+        <input id="username" type="text" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">密碼:</label>
+        <input id="password" type="password" name="password" required>
+      </div>
+      <div class="button-container">
+        <button id="submit-btn" type="submit">登入</button>
+        <button type="button" class="register" onclick="window.location.href='/admin/sign-up'">點我註冊</button>
+      </div>
+      <div id="error-message" class="error-message"></div>
+    </form>
+  </div>
   <script>
-    document.getElementById('sign-in-form').addEventListener('submit', function(event) {
+    document.getElementById("sign-in-form").addEventListener("submit", function (event) {
       event.preventDefault();
       const username = event.target.username.value;
       const password = event.target.password.value;
-      let errorMessage = '';
+      let errorMessage = "";
 
       if (username.length < 4) {
-        errorMessage = 'Username must be at least 4 characters long.';
+        errorMessage = "用戶名至少要有4個字符。";
       }
 
       const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
       if (!passwordRegex.test(password)) {
-        errorMessage = 'Password must be at least 8 characters long and contain both letters and numbers.';
+        errorMessage = "密碼必須至少有8個字符，並包含英文字母和數字。";
       }
 
       if (errorMessage) {
-        document.getElementById('error-message').innerText = errorMessage;
+        document.getElementById("error-message").innerText = errorMessage;
       } else {
         event.target.submit();
       }
     });
   </script>
 </body>
+
 </html>

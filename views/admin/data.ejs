@@ -1,47 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>
-    <%= title %>
-  </title>
+  <title>測驗資料</title>
   <style>
+    html {
+      min-width: 768px;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
     table {
-      border-collapse: collapse;
       width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #ffffff;
+      border: 1px solid #cccccc;
     }
 
     th,
     td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #cccccc;
     }
 
     th {
-      background-color: #f2f2f2;
+      background-color: #007bff;
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #e3f2fd;
+    }
+
+    tr.deleted {
+      background-color: #ffcdd2;
+      color: #d32f2f;
+    }
+
+    tr:hover {
+      background-color: #bbdefb;
+    }
+
+    button.delete {
+      padding: 5px 10px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    button.delete:hover {
+      background-color: #c82333;
     }
   </style>
 </head>
 
 <body>
-  <h1>User Data</h1>
+  <h1>測驗資料</h1>
   <table id="dataTable">
     <thead>
       <tr>
-        <th>Username</th>
-        <th>Options</th>
-        <th>Adventure</th>
-        <th>Social</th>
-        <th>Creativity</th>
-        <th>Strategy</th>
-        <th>Emotion</th>
-        <th>Intuition</th>
-        <th>Character</th>
-        <th>Team</th>
-        <th>Time</th>
+        <th>用戶名</th>
+        <th>選項</th>
+        <th>冒險</th>
+        <th>社交</th>
+        <th>創造力</th>
+        <th>策略</th>
+        <th>情感</th>
+        <th>直覺</th>
+        <th>角色</th>
+        <th>隊伍</th>
+        <th>時間</th>
+        <th></th>
       </tr>
     </thead>
     <tbody id="tableBody">
@@ -77,15 +122,42 @@
                 hour12: false
               }).replace(/(\d{2})\/(\d{2})\/(\d{4}),/, "$3-$1-$2")}
               </td>
-              `;
+              <td><button class="delete" onclick="deleteData('${item._id}')">刪除</button></td>
+            `;
+            if (item.deleted) {
+              row.classList.add("deleted");
+            }
             tableBody.appendChild(row);
           });
         })
         .catch(error => {
           console.error("Error fetching data:", error);
-          alert("Unable to fetch data. Please try again later.");
+          alert("資料抓取失敗，請稍後再試。");
         });
     });
+
+    function deleteData(id) {
+      if (confirm("確定要刪除這筆資料嗎？")) {
+        fetch(`/api/data/${id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ deleted: true })
+        })
+          .then(response => {
+            if (response.ok) {
+              location.reload();
+            } else {
+              alert("Failed to delete the data.");
+            }
+          })
+          .catch(error => {
+            console.error("Error deleting the data:", error);
+            alert("無法刪除資料，請稍後再試。");
+          });
+      }
+    }
   </script>
 </body>
 
