@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const clickableImages = document.querySelectorAll('.clickable-image');
+  const clickableImages = document.querySelectorAll(".clickable-image");
 
   clickableImages.forEach(item => {
-    item.style.cursor = 'pointer';
-    item.addEventListener('click', () => {
+    item.style.cursor = "pointer";
+    item.addEventListener("click", () => {
       window.open(item.src, "_blank");
     });
   });
