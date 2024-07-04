@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>測出你是哪種噪浪守護者</title>
+  <link rel="stylesheet" href="/stylesheets/reset.css">
+  <link rel="stylesheet" href="/stylesheets/game.css">
+  <script src="/javascripts/game.js"></script>
+</head>
+
+<body>
+  <div id="main-container" class="container">
+    <video id="bg" src="/media/game/bg1.mp4" autoplay muted loop playsinline></video>
+    <div id="bgms">
+      <audio id="bgm1" src="/media/game/bgm1.MP3" loop></audio>
+      <audio id="bgm2" src="/media/game/bgm2.wav"></audio>
+      <audio id="bgm3" src="/media/game/bgm3.MP3"></audio>
+      <audio id="bgm4" src="/media/game/bgm4.aac"></audio>
+      <audio id="bgm5" src="/media/game/bgm5.wav"></audio>
+    </div>
+    <img id="sound" class="hidden" src="/media/game/sound1.png" alt="sound">
+    <canvas id="result" class="hidden"></canvas>
+    <img id="team" class="hidden" src="" alt="team">
+    <div id="cutscene" class="hidden">
+      <div id="cutscene-bg" class="bg"></div>
+      <img id="bubble" src="/media/game/buble.png" alt="bubble">
+    </div>
+    <img id="text1" class="hidden" src="/media/game/text1.png" alt="text1">
+    <img id="text2" class="hidden" src="/media/game/text2.png" alt="text2">
+    <div id="input-container" class="container hidden">
+      <img class="frame" src="/media/game/frame1.png" alt="input-frame">
+      <input id="input-box" class="input-box" type="text">
+    </div>
+    <img id="mask" class="hidden" src="/media/game/mask1.png" alt="mask">
+    <img id="bar" class="bar-layout1 hidden" src="/media/game/bar1.png" alt="bar">
+    <img id="btn1" class="btn hidden" src="/media/game/btn1.png" alt="start-btn">
+    <img id="btn2" class="btn hidden" src="/media/game/btn2.png" alt="continue-btn">
+    <img id="btn3" class="btn hidden" src="/media/game/btn3.png" alt="generate-btn">
+    <img id="btn4" class="btn hidden" src="/media/game/btn4.png" alt="restart-btn">
+    <img id="btn5" class="btn hidden" src="/media/game/btn5.png" alt="save-image-btn">
+    <img id="btn6" class="btn hidden" src="/media/game/btn6.png" alt="check-result-btn">
+    <img id="btn7" class="btn hidden" src="/media/game/btn7.png" alt="skip-btn">
+    <a href="/" target="_blank">
+      <img id="btn8" class="btn hidden" src="/media/game/btn8.png" alt="home-btn">
+    </a>
+    <div id="question-op-container" class="container hidden">
+      <div id="question-container">
+        <img id="question-frame" src="/media/game/frame2.png" alt="">
+        <div id="question-text"></div>
+      </div>
+      <div id="op-btns-container">
+        <div id="op-btn1" class="btn op-btn container">
+          <img id="op-frame1" class="op-frame" src="/media/game/frame1.png" alt="op-btn1-frame">
+          <div id="op-text1" class="op-text"></div>
+        </div>
+        <div id="op-btn2" class="btn op-btn container">
+          <img id="op-frame2" class="op-frame" src="/media/game/frame1.png" alt="op-btn2-frame">
+          <div id="op-text2" class="op-text"></div>
+        </div>
+        <div id="op-btn3" class="btn op-btn container">
+          <img id="op-frame3" class="op-frame" src="/media/game/frame1.png" alt="op-btn3-frame">
+          <div id="op-text3" class="op-text"></div>
+        </div>
+        <div id="op-btn4" class="btn op-btn container hidden">
+          <img id="op-frame4" class="op-frame" src="/media/game/frame1.png" alt="op-btn4-frame">
+          <div id="op-text4" class="op-text"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

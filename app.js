@@ -31,7 +31,10 @@ app.use(session({
   secret: "dynamic-wave",
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false }
+  cookie: {
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 24 * 60 * 60 * 1000
+  }
 }));
 app.use((req, res, next) => {
   res.locals.baseUrl = `${req.protocol}://${req.get("host")}`;

@@ -1,22 +1,22 @@
 const express = require("express");
 const router = express.Router();
-const dataController = require("../controllers/dataController");
+const apiController = require("../controllers/apiController");
 const checkSessionMiddleware = require("../middlewares/authMiddleware");
 
-router.get("/questions", dataController.getQuestions);
+router.get("/question", apiController.getQuestion);
 
-router.post("/data", dataController.postData);
+router.post("/data", apiController.postData);
 
-router.get("/data", checkSessionMiddleware, dataController.getData);
+router.get("/data", checkSessionMiddleware, apiController.getData);
 
-router.get("/counter", checkSessionMiddleware, dataController.getCounter);
+router.get("/blue-ratio", apiController.getBlueRatio);
 
-router.get("/blueRatio", dataController.getBlueRatio);
+router.get("/score-record", checkSessionMiddleware, apiController.getScoreRecord);
 
-router.get("/submit-log", checkSessionMiddleware, dataController.getSubmitLog);
+router.post("/score-record", checkSessionMiddleware, apiController.postScoreRecord);
 
-router.post("/submit-log", checkSessionMiddleware, dataController.postSubmitLog);
+router.get("/total-score", apiController.getTotalScore);
 
-router.get("/score", dataController.getScore);
+router.get("/sign-in-history", checkSessionMiddleware, apiController.getSignInHistory);
 
 module.exports = router;

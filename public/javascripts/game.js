@@ -74,13 +74,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function fetchQuestions() {
-    const response = await fetch("/api/questions");
+    const response = await fetch("/api/question");
     const data = await response.json();
     questions = data;
   }
 
   async function fetchBlueRatio() {
-    const response = await fetch("/api/blueRatio");
+    const response = await fetch("/api/blue-ratio");
     const data = await response.json();
     return data.blueRatio;
   }
@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function fn2() {
     username = $inputBox.value;
-    if (userName) {
+    if (username) {
       toNextPage(() => {
         $bg.src = "/media/game/bg3.mp4";
         $bg.loop = false;
@@ -295,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ctx.fillStyle = "rgb(92, 53, 3)";
       ctx.textAlign = "center";
 
-      ctx.fillText(userName, 540, 90);
+      ctx.fillText(username, 540, 90);
     };
 
     $result.width = 1080;

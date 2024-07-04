@@ -10,13 +10,13 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   function updateTotals(totals) {
-    if (totals.$blueTotals && totals.$yellowTotals) {
+    if (totals.blueTotal && totals.yellowTotal) {
       $blueScore.innerHTML = totals.blueTotal;
       $yellowScore.innerHTML = totals.yellowTotal;
     }
   }
 
-  fetch("/api/score")
+  fetch("/api/total-score")
     .then(response => response.json())
     .then(updateTotals);
 

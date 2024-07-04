@@ -3,7 +3,7 @@ const checkSessionMiddleware = (req, res, next) => {
   if (req.session.username) {
     return next();
   }
-  res.redirect("/admin/login");
+  res.redirect("/admin/sign-in");
 };
 
 module.exports = checkSessionMiddleware;

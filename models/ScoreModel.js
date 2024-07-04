@@ -2,6 +2,10 @@ const moment = require("moment-timezone");
 const mongoose = require("mongoose");
 
 const ScoreSchema = new mongoose.Schema({
+  submittedBy: {
+    type: String,
+    required: true
+  },
   competition: {
     type: String,
     required: true
@@ -15,18 +19,25 @@ const ScoreSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  submittedAt: {
+  time: {
     type: Date,
     default: Date.now
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false
   }
 }, {
   toJSON: {
     transform: (doc, ret) => {
       return {
+        _id: ret._id,
+        submittedBy: ret.submittedBy,
         competition: ret.competition,
         team: ret.team,
         score: ret.score,
-        submittedAt: moment(ret.submittedAt).tz("Asia/Taipei").format("YYYY-MM-DDTHH:mm:ss.SSSZ")
+        time: moment(ret.time).tz("Asia/Taipei").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+        isDeleted: ret.isDeleted
       };
     }
   }

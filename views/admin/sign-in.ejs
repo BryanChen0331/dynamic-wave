@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Signin</title>
+  <style>
+    .error-message {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin Signin</h1>
+  <form id="sign-in-form" action="/admin/sign-in" method="post">
+    <label for="username">Username:</label>
+    <input id="username" type="text" name="username" required>
+    <br><br>
+    <label for="password">Password:</label>
+    <input id="password" type="password" name="password" required>
+    <br><br>
+    <button id="submit-btn" type="submit">Sign In</button>
+    <br><br>
+    <div id="error-message" class="error-message"></div>
+  </form>
+
+  <script>
+    document.getElementById('sign-in-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const username = event.target.username.value;
+      const password = event.target.password.value;
+      let errorMessage = '';
+
+      if (username.length < 4) {
+        errorMessage = 'Username must be at least 4 characters long.';
+      }
+
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      if (!passwordRegex.test(password)) {
+        errorMessage = 'Password must be at least 8 characters long and contain both letters and numbers.';
+      }
+
+      if (errorMessage) {
+        document.getElementById('error-message').innerText = errorMessage;
+      } else {
+        event.target.submit();
+      }
+    });
+  </script>
+</body>
+</html>

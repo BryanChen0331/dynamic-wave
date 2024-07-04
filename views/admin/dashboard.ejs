@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= title %>
+  </title>
+</head>
+
+<body>
+  <h1>Admin Dashboard</h1>
+  <button onclick="location.href='/admin/competition'">Competition Score</button>
+  <br><br>
+  <button onclick="location.href='/admin/data'">User Data</button>
+  <br><br>
+  <button onclick="location.href='/admin/score'">Score Submit Log</button>
+  <br><br>
+  <button onclick="location.href='/admin/sign-in-history'">Login History</button>
+  <br><br>
+
+  <hr>
+
+  <br>
+  <button id="sign-out-btn">Logout</button>
+</body>
+<script>
+  document.querySelector("#sign-out-btn").addEventListener("click", function () {
+    fetch("/admin/sign-out", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(response => {
+      if (response.redirected) {
+        window.location.href = "/admin/sign-in";
+      }
+    }).catch(error => {
+      console.error("Error:", error);
+    });
+  });
+</script>
+
+</html>

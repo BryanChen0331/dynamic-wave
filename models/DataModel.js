@@ -2,7 +2,7 @@ const moment = require("moment-timezone");
 const mongoose = require("mongoose");
 
 const DataSchema = new mongoose.Schema({
-  userName: {
+  username: {
     type: String,
     required: true
   },
@@ -48,17 +48,23 @@ const DataSchema = new mongoose.Schema({
   time: {
     type: Date,
     default: Date.now
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false
   }
 }, {
   toJSON: {
     transform: (doc, ret) => {
       return {
-        userName: ret.userName,
+        _id: ret._id,
+        username: ret.username,
         options: ret.options,
         attributes: ret.attributes,
         character: ret.character,
         team: ret.team,
-        time: moment(ret.time).tz("Asia/Taipei").format("YYYY-MM-DDTHH:mm:ss.SSSZ")
+        time: moment(ret.time).tz("Asia/Taipei").format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+        isDeleted: ret.isDeleted
       };
     }
   }
