@@ -225,7 +225,7 @@ p {
   margin-top: 10%;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   #nav-items {
     display: none;
     flex-direction: column;
