@@ -390,7 +390,12 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   $btn2.addEventListener("click", () => {
     $bgm2.play();
-    fn2();
+    $bgm2.ontimeupdate = () => {
+      if ($bgm2.currentTime > 0.1) {
+        $bgm2.ontimeupdate = null;
+        fn2();
+      }
+    };
   });
   $btn3.addEventListener("click", () => {
     $bgm5.play();
@@ -408,8 +413,13 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   $btn6.addEventListener("click", () => {
     $bgm2.play();
-    toggleVisibility($team);
-    toggleVisibility($btn6);
+    $bgm2.ontimeupdate = () => {
+      if ($bgm2.currentTime > 0.1) {
+        $bgm2.ontimeupdate = null;
+        toggleVisibility($team);
+        toggleVisibility($btn6);
+      }
+    };
   });
   $opBtn1.addEventListener("click", () => nextQuestion(0));
   $opBtn2.addEventListener("click", () => nextQuestion(1));
