@@ -384,7 +384,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $bgm2.onplay = () => {
       setTimeout(() => {
         fn1();
-      }, 100);
+      }, 0);
     };
   });
   $btn2.addEventListener("click", () => {
