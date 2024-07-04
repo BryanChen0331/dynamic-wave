@@ -381,30 +381,46 @@ document.addEventListener("DOMContentLoaded", function () {
   $btn1.addEventListener("click", () => {
     $bgm1.play();
     $bgm2.play();
-    fn1();
+    $bgm2.onplay = () => {
+      $bgm2.onplay = "";
+      fn1();
+    };
   });
   $btn2.addEventListener("click", () => {
     $bgm2.play();
-    fn2();
+    $bgm2.onplay = () => {
+      $bgm2.onplay = "";
+      fn2();
+    };
   });
   $btn3.addEventListener("click", () => {
     $bgm5.play();
+    $bgm5.onplay = () => {
+      $bgm5.onplay = "";
+      fn4();
+    };
   });
-  $btn3.addEventListener("click", fn4);
   $btn4.addEventListener("click", () => {
     $bgm2.play();
     $bgm2.onended = () => {
+      $bgm2.onended = "";
       window.location.reload();
     };
   });
   $btn5.addEventListener("click", () => {
     $bgm2.play();
-    debounceShareImage();
+    $bgm2.onplay = () => {
+      $bgm2.onplay = "";
+      debounceShareImage();
+    };
   });
   $btn6.addEventListener("click", () => {
     $bgm2.play();
-    toggleVisibility($team);
-    toggleVisibility($btn6);
+    $bgm2.onplay = () => {
+      $bgm2.onplay = "";
+      toggleVisibility($team);
+      toggleVisibility($btn6);
+    };
   });
   $opBtn1.addEventListener("click", () => nextQuestion(0));
   $opBtn2.addEventListener("click", () => nextQuestion(1));
