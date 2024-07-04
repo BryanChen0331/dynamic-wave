@@ -379,45 +379,37 @@ document.addEventListener("DOMContentLoaded", function () {
     fn3();
   });
   $btn1.addEventListener("click", () => {
-    $bgm2.onplay = () => {
-      fn1();
-      $bgm2.onplay = null;
-    };
     $bgm1.play();
     $bgm2.play();
+    $bgm2.onplay = () => {
+      $bgm2.onplay = null;
+      setTimeout(() => {
+        fn1();
+      }, 300);
+    };
   });
   $btn2.addEventListener("click", () => {
-    $bgm2.onplay = () => {
-      fn2();
-      $bgm2.onplay = null;
-    };
     $bgm2.play();
+    fn2();
   });
   $btn3.addEventListener("click", () => {
-    $bgm5.onplay = () => {
-      fn4();
-      $bgm5.onplay = null;
-    };
     $bgm5.play();
   });
+  $btn3.addEventListener("click", fn4);
   $btn4.addEventListener("click", () => {
+    $bgm2.play();
     $bgm2.onended = () => {
       window.location.reload();
-      $bgm2.onended = null;
     };
-    $bgm2.play();
   });
   $btn5.addEventListener("click", () => {
     $bgm2.play();
     debounceShareImage();
   });
   $btn6.addEventListener("click", () => {
-    $bgm2.onplay = () => {
-      toggleVisibility($team);
-      toggleVisibility($btn6);
-      $bgm2.onplay = null;
-    };
     $bgm2.play();
+    toggleVisibility($team);
+    toggleVisibility($btn6);
   });
   $opBtn1.addEventListener("click", () => nextQuestion(0));
   $opBtn2.addEventListener("click", () => nextQuestion(1));
