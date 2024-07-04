@@ -166,7 +166,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function fn1() {
-    $bgm2.onplay = "";
     toNextPage(() => {
       $bg.src = "/media/game/bg2.mp4";
       toggleVisibility($text1);
@@ -382,7 +381,10 @@ document.addEventListener("DOMContentLoaded", function () {
   $btn1.addEventListener("click", () => {
     $bgm1.play();
     $bgm2.play();
-    $bgm2.onplay = fn1;
+    $bgm2.onplay = () => {
+      fn1();
+      $bgm2.onplay = "";
+    };
   });
   $btn2.addEventListener("click", () => {
     $bgm2.play();
