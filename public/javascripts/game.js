@@ -381,11 +381,11 @@ document.addEventListener("DOMContentLoaded", function () {
   $btn1.addEventListener("click", () => {
     $bgm1.play();
     $bgm2.play();
-    $bgm2.onplay = () => {
-      $bgm2.onplay = null;
-      setTimeout(() => {
+    $bgm2.ontimeupdate = () => {
+      if ($bgm2.currentTime > 0.1) {
+        $bgm2.ontimeupdate = null;
         fn1();
-      }, 300);
+      }
     };
   });
   $btn2.addEventListener("click", () => {
