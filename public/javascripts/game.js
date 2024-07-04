@@ -361,7 +361,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  const debounceShareImage = debounce(shareImage, 300)
+  const debounceShareImage = debounce(shareImage, 1000)
 
   async function postData(data) {
     await fetch("/api/data", {
@@ -379,49 +379,45 @@ document.addEventListener("DOMContentLoaded", function () {
     fn3();
   });
   $btn1.addEventListener("click", () => {
+    $bgm2.onplay = () => {
+      fn1();
+      $bgm2.onplay = null;
+    };
     $bgm1.play();
     $bgm2.play();
-    $bgm2.onplay = () => {
-      setTimeout(() => {
-        fn1();
-      }, 0);
-    };
   });
   $btn2.addEventListener("click", () => {
-    $bgm2.play();
     $bgm2.onplay = () => {
-      $bgm2.onplay = "";
       fn2();
+      $bgm2.onplay = null;
     };
+    $bgm2.play();
   });
   $btn3.addEventListener("click", () => {
-    $bgm5.play();
     $bgm5.onplay = () => {
-      $bgm5.onplay = "";
       fn4();
+      $bgm5.onplay = null;
     };
+    $bgm5.play();
   });
   $btn4.addEventListener("click", () => {
-    $bgm2.play();
     $bgm2.onended = () => {
-      $bgm2.onended = "";
       window.location.reload();
+      $bgm2.onended = null;
     };
+    $bgm2.play();
   });
   $btn5.addEventListener("click", () => {
     $bgm2.play();
-    $bgm2.onplay = () => {
-      $bgm2.onplay = "";
-      debounceShareImage();
-    };
+    debounceShareImage();
   });
   $btn6.addEventListener("click", () => {
-    $bgm2.play();
     $bgm2.onplay = () => {
-      $bgm2.onplay = "";
       toggleVisibility($team);
       toggleVisibility($btn6);
+      $bgm2.onplay = null;
     };
+    $bgm2.play();
   });
   $opBtn1.addEventListener("click", () => nextQuestion(0));
   $opBtn2.addEventListener("click", () => nextQuestion(1));
