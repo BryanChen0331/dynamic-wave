@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let isMuted = false;
   let currentQuestion = 0;
-  let userName;
+  let username;
   let character;
   let team;
   let handleVideoEndedWrapper;
@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function fn2() {
-    userName = $inputBox.value;
+    username = $inputBox.value;
     if (userName) {
       toNextPage(() => {
         $bg.src = "/media/game/bg3.mp4";
@@ -311,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const data = {
-      userName,
+      username,
       options,
       attributes,
       character,
