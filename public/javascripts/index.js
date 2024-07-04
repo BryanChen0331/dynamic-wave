@@ -1,4 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
+  const clickableImages = document.querySelectorAll('.clickable-image');
+
+  clickableImages.forEach(item => {
+    item.style.cursor = 'pointer';
+    item.addEventListener('click', () => {
+      window.open(item.src, "_blank");
+    });
+  });
+
   const $blueScore = document.querySelector("#blue-score");
   const $yellowScore = document.querySelector("#yellow-score");
 

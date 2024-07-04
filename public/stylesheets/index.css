@@ -216,6 +216,10 @@ p {
   right: 15%;
 }
 
+.clickable-image {
+  cursor: pointer;
+}
+
 #agenda2 {
   margin-top: 10%;
 }
