@@ -6,4 +6,8 @@ router.get("/", function (req, res) {
   res.render("index");
 });
 
+router.get("/score-panel", function (req, res) {
+  res.render("score-panel");
+});
+
 module.exports = router;

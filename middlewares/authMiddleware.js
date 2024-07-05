@@ -1,4 +1,4 @@
-const Admin = require("../models/AdminModel"); 
+const Admin = require("../models/AdminModel");
 
 exports.requireSignInMiddleware = async (req, res, next) => {
   try {
@@ -16,8 +16,8 @@ exports.requireSignInMiddleware = async (req, res, next) => {
 };
 
 exports.requireManagerMiddleware = (req, res, next) => {
-  if (req.session.permission === 'manager') {
+  if (req.session.permission === "manager") {
     return next();
   }
-  res.json({ code: '1001', message: '您沒有足夠的權限進行此操作。', data: null });
+  res.json({ code: "1001", message: "您沒有足夠的權限進行此操作。", data: null });
 };

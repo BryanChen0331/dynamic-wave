@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>記分板</title>
+  <style>
+    @font-face {
+      font-family: "Cubic";
+      src: url("/font/cubic.ttf") format("truetype");
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: white;
+    }
+
+    p {
+      font-family: "Cubic", sans-serif;
+      text-align: center;
+      color: white;
+    }
+
+    .container {
+      background-color: black;
+      width: 100%;
+      max-width: 2941px;
+      min-width: 500px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before {
+      content: "";
+      display: block;
+      padding-top: 60%;
+    }
+
+    #score-panel {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+    }
+
+    @keyframes rotate {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .vortex {
+      position: absolute;
+      width: 90%;
+      animation: rotate 5s linear infinite;
+    }
+
+    #blue-vortex {
+      top: -19%;
+      left: -13%;
+    }
+
+    #yellow-vortex {
+      top: -19%;
+      right: -15%;
+    }
+
+    .score {
+      position: absolute;
+      top: 30%;
+      width: 30%;
+      font-size: 30px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      -webkit-text-stroke: 1px black;
+    }
+
+    #blue-score {
+      left: 17%;
+    }
+
+    #yellow-score {
+      right: 15%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="main-container" class="container">
+    <img id="score-panel" src="/media/index/score-panel.png" alt="score-panel">
+    <img id="blue-vortex" class="vortex" src="/media/index/blue-vortex.png" alt="blue-vortex">
+    <p id="blue-score" class="score">0</p>
+    <img id="yellow-vortex" class="vortex" src="/media/index/yellow-vortex.png" alt="yellow-vortex">
+    <p id="yellow-score" class="score">0</p>
+  </div>
+
+  <script>
+    const $mainContainer = document.querySelector("#main-container");
+    const $blueScore = document.querySelector("#blue-score");
+    const $yellowScore = document.querySelector("#yellow-score");
+
+    function updateScoreFontSize() {
+      const containerWidth = $mainContainer.offsetWidth;
+      const fontSize = containerWidth / 10;
+
+      $blueScore.style.fontSize = `${fontSize}px`;
+      $yellowScore.style.fontSize = `${fontSize}px`;
+    }
+
+    updateScoreFontSize();
+
+    window.addEventListener("resize", () => {
+      updateScoreFontSize();
+    });
+
+    function animateNumber(element, targetScore, duration) {
+      return new Promise((resolve) => {
+        const startScore = parseFloat(element.textContent);
+        const difference = targetScore - startScore;
+        const startTime = performance.now();
+
+        function easeOutCubic(t) {
+          return 1 - Math.pow(1 - t, 3);
+        }
+
+        function updateNumber(currentTime) {
+          const elapsedTime = currentTime - startTime;
+          const progress = Math.min(elapsedTime / duration, 1);
+          const easedProgress = easeOutCubic(progress);
+
+          const currentScore = startScore + difference * easedProgress;
+          element.textContent = Math.round(currentScore);
+
+          if (progress < 1) {
+            requestAnimationFrame(updateNumber);
+          } else {
+            element.textContent = targetScore;
+            resolve();
+          }
+        }
+
+        requestAnimationFrame(updateNumber);
+      });
+    }
+
+    class AnimationQueue {
+      constructor() {
+        this.queue = [];
+        this.isPlaying = false;
+      }
+
+      add(element, targetScore, duration) {
+        this.queue.push({ element, targetScore, duration });
+        if (!this.isPlaying) {
+          this.playNext();
+        }
+      }
+
+      async playNext() {
+        if (this.queue.length === 0) {
+          this.isPlaying = false;
+          return;
+        }
+
+        this.isPlaying = true;
+        const { element, targetScore, duration } = this.queue.shift();
+        await animateNumber(element, targetScore, duration);
+        this.playNext();
+      }
+    }
+
+    const blueAnimationQueue = new AnimationQueue();
+    const yellowAnimationQueue = new AnimationQueue();
+
+    function updateTotalScores(totals) {
+      if (typeof (totals.blueTotal) === "number" && typeof (totals.yellowTotal) === "number") {
+        if (parseInt($blueScore.innerHTML) !== totals.blueTotal) {
+          blueAnimationQueue.add($blueScore, totals.blueTotal, 3000);
+        }
+        if (parseInt($yellowScore.innerHTML) !== totals.yellowTotal) {
+          yellowAnimationQueue.add($yellowScore, totals.yellowTotal, 3000);
+        }
+      }
+    }
+
+    const eventSource = new EventSource("/sse");
+
+    eventSource.onmessage = function (event) {
+      const totals = JSON.parse(event.data);
+      updateTotalScores(totals);
+    };
+
+    fetch("/api/total-score")
+      .then(response => response.json())
+      .then(({ data }) => {
+        updateTotalScores(data)
+      });
+  </script>
+</body>
+
+</html>

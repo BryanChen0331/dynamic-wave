@@ -116,8 +116,7 @@
     document.addEventListener("DOMContentLoaded", function () {
       fetch("/api/deleted-score-record")
         .then(response => response.json())
-        .then(result => result.data)
-        .then(data => {
+        .then(({ data }) => {
           const tableBody = document.querySelector("#deletedTableBody");
           data.forEach(item => {
             const row = document.createElement("tr");

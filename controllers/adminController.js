@@ -3,6 +3,20 @@ const bcrypt = require("bcrypt");
 const Admin = require("../models/AdminModel");
 const SignIn = require("../models/SignInModel");
 
+const ResponseCodes = {
+  SUCCESS: "0000",
+  VALIDATION_ERROR: "1001",
+  AUTH_ERROR: "1002",
+  NOT_FOUND: "1003",
+  PERMISSION_ERROR: "1004",
+  OPERATION_FAILED: "1005",
+  SERVER_ERROR: "2001"
+};
+
+function createResponse(code, message, data = null) {
+  return { code, message, data };
+}
+
 exports.signUpPage = (req, res) => {
   res.render("admin/sign-up");
 };
@@ -11,18 +25,18 @@ exports.signUp = async (req, res) => {
   const { username, password } = req.body;
 
   if (username.length < 4) {
-    return res.json({ code: "1001", message: "用戶名至少要有4個字元。", data: null });
+    return res.status(400).json(createResponse(ResponseCodes.VALIDATION_ERROR, "用戶名至少要有4個字元。"));
   }
 
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
   if (!passwordRegex.test(password)) {
-    return res.json({ code: "1002", message: "密碼必須至少有8個字元，並包含英文字母和數字。", data: null });
+    return res.status(400).json(createResponse(ResponseCodes.VALIDATION_ERROR, "密碼必須至少有8個字元，並包含英文字母和數字。"));
   }
 
   try {
     const existingUser = await Admin.findOne({ username });
     if (existingUser) {
-      return res.json({ code: "1003", message: "用戶名已被使用。", data: null });
+      return res.status(409).json(createResponse(ResponseCodes.AUTH_ERROR, "用戶名已被使用。"));
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -35,10 +49,10 @@ exports.signUp = async (req, res) => {
 
     await admin.save();
 
-    res.json({ code: "0000", message: "註冊成功，請等待管理員審核。", data: null });
+    res.status(201).json(createResponse(ResponseCodes.SUCCESS, "註冊成功，請等待管理員審核。"));
   } catch (error) {
     console.error(error);
-    res.json({ code: "2001", message: "註冊過程中發生錯誤。", data: null });
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "註冊過程中發生錯誤。"));
   }
 };
 
@@ -52,20 +66,20 @@ exports.signIn = async (req, res) => {
   try {
     const admin = await Admin.findOne({ username });
     if (!admin) {
-      return res.json({ code: "1001", message: "用戶名不存在", data: null });
+      return res.status(404).json(createResponse(ResponseCodes.NOT_FOUND, "用戶名不存在"));
     }
 
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
-      return res.json({ code: "1002", message: "密碼錯誤", data: null });
+      return res.status(401).json(createResponse(ResponseCodes.AUTH_ERROR, "密碼錯誤"));
     }
 
     if (admin.status === "pending") {
-      return res.json({ code: "1003", message: "帳號審核中", data: null });
+      return res.status(403).json(createResponse(ResponseCodes.PERMISSION_ERROR, "帳號審核中"));
     }
 
     if (admin.status === "banned") {
-      return res.json({ code: "1004", message: "帳號已被封禁", data: null });
+      return res.status(403).json(createResponse(ResponseCodes.PERMISSION_ERROR, "帳號已被封禁"));
     }
 
     req.session.username = username;
@@ -74,10 +88,10 @@ exports.signIn = async (req, res) => {
     const signIn = new SignIn({ username });
     await signIn.save();
 
-    res.json({ code: "0000", message: "登入成功", data: null });
+    res.status(200).json(createResponse(ResponseCodes.SUCCESS, "登入成功"));
   } catch (error) {
     console.error(error);
-    res.json({ code: "2001", message: "登入過程中發生錯誤", data: null });
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "登入過程中發生錯誤"));
   }
 };
 
@@ -121,10 +135,10 @@ exports.bannedUser = (req, res) => {
   res.render("admin/user/banned-user");
 };
 
-exports.signOut = (req, res, next) => {
+exports.signOut = (req, res) => {
   req.session.destroy(err => {
     if (err) {
-      return next(err);
+      return res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "登出過程中發生錯誤"));
     }
     res.redirect("/admin/sign-in");
   });

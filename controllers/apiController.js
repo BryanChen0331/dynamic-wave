@@ -3,6 +3,20 @@ const Score = require("../models/ScoreModel");
 const Admin = require("../models/AdminModel");
 const SignIn = require("../models/SignInModel");
 
+const ResponseCodes = {
+  SUCCESS: "0000",
+  VALIDATION_ERROR: "1001",
+  AUTH_ERROR: "1002",
+  NOT_FOUND: "1003",
+  PERMISSION_ERROR: "1004",
+  OPERATION_FAILED: "1005",
+  SERVER_ERROR: "2001"
+};
+
+function createResponse(code, message, data = null) {
+  return { code, message, data };
+}
+
 const getLatestTotals = async () => {
   const totals = await Score.aggregate([
     {
@@ -38,9 +52,10 @@ const sendSSEUpdate = (req, data) => {
 exports.getQuestions = async (req, res) => {
   try {
     const questions = require("../public/json/questions.json");
-    res.json(questions);
+    res.json(createResponse(ResponseCodes.SUCCESS, "成功獲取問題", questions));
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("獲取問題時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "獲取問題時發生錯誤"));
   }
 };
 
@@ -48,27 +63,30 @@ exports.postData = async (req, res) => {
   try {
     const newData = new Data(req.body);
     await newData.save();
-    res.status(201).json(newData);
+    res.status(201).json(createResponse(ResponseCodes.SUCCESS, "數據保存成功", newData));
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("保存數據時發生錯誤:", error);
+    res.status(400).json(createResponse(ResponseCodes.VALIDATION_ERROR, "數據驗證失敗"));
   }
 };
 
 exports.getData = async (req, res) => {
   try {
     const datas = await Data.find({ isDeleted: false }).sort({ time: -1 });
-    res.json(datas);
+    res.json(createResponse(ResponseCodes.SUCCESS, "成功獲取數據", datas));
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("獲取數據時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "獲取數據時發生錯誤"));
   }
 };
 
 exports.getDeletedData = async (req, res) => {
   try {
     const datas = await Data.find({ isDeleted: true }).sort({ time: -1 });
-    res.json(datas);
+    res.json(createResponse(ResponseCodes.SUCCESS, "成功獲取已刪除數據", datas));
   } catch (error) {
-    res.status(500).json({ message: '獲取已刪除資料時發生錯誤', error });
+    console.error("獲取已刪除數據時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "獲取已刪除數據時發生錯誤"));
   }
 };
 
@@ -77,24 +95,26 @@ exports.deleteData = async (req, res) => {
   try {
     const updatedData = await Data.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
     if (!updatedData) {
-      return res.status(404).json({ message: "Data not found" });
+      return res.status(404).json(createResponse(ResponseCodes.NOT_FOUND, "數據不存在"));
     }
-    res.json(updatedData);
+    res.json(createResponse(ResponseCodes.SUCCESS, "數據刪除成功", updatedData));
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("刪除數據時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "刪除數據時發生錯誤"));
   }
-}
+};
 
 exports.restoreData = async (req, res) => {
   try {
     const data = await Data.findByIdAndUpdate(req.params.id, { isDeleted: false }, { new: true });
     if (data) {
-      res.json({ message: '資料已復原', data });
+      res.json(createResponse(ResponseCodes.SUCCESS, "數據恢復成功", data));
     } else {
-      res.status(404).json({ message: '找不到該資料' });
+      res.status(404).json(createResponse(ResponseCodes.NOT_FOUND, "找不到該數據"));
     }
   } catch (error) {
-    res.status(500).json({ message: '復原資料時發生錯誤', error });
+    console.error("恢復數據時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "恢復數據時發生錯誤"));
   }
 };
 
@@ -116,18 +136,20 @@ exports.getBlueRatio = async (req, res) => {
 
     const { total, blueCount } = totalScores[0] || { total: 0, blueCount: 0 };
     const blueRatio = total > 0 ? (blueCount / total) : 0.5;
-    res.json({ blueRatio: blueRatio.toFixed(2) });
+    res.json(createResponse(ResponseCodes.SUCCESS, "成功獲取藍隊比例", { blueRatio: blueRatio.toFixed(2) }));
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("計算藍隊比例時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "計算藍隊比例時發生錯誤"));
   }
 };
 
 exports.getScoreRecord = async (req, res) => {
   try {
     const scores = await Score.find({ isDeleted: false }).sort({ time: -1 });
-    res.json(scores);
+    res.json(createResponse(ResponseCodes.SUCCESS, "成功獲取積分記錄", scores));
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("獲取積分記錄時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "獲取積分記錄時發生錯誤"));
   }
 };
 
@@ -142,35 +164,38 @@ exports.postScoreRecord = async (req, res) => {
     const latestTotals = await getLatestTotals();
     sendSSEUpdate(req, latestTotals);
 
-    res.status(201).json({ message: "Score submitted successfully!", score: newScore });
+    res.status(201).json(createResponse(ResponseCodes.SUCCESS, "積分提交成功", newScore));
   } catch (error) {
-    console.error("Error saving score:", error);
-    res.status(500).json({ message: "Failed to submit score", error });
+    console.error("保存積分時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "保存積分時發生錯誤"));
   }
 };
 
 exports.getDeletedScoreRecord = async (req, res) => {
   try {
     const scores = await Score.find({ isDeleted: true }).sort({ time: -1 });
-    res.json({ data: scores });
+    res.json(createResponse(ResponseCodes.SUCCESS, "成功獲取已刪除積分記錄", scores));
   } catch (error) {
-    res.status(500).json({ message: "獲取已刪除積分記錄時發生錯誤", error });
+    console.error("獲取已刪除積分記錄時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "獲取已刪除積分記錄時發生錯誤"));
   }
-}
+};
 
 exports.deleteScoreRecord = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(req.params);
     const updatedScore = await Score.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
     if (updatedScore) {
-      res.status(200).json({ message: "Score deleted successfully" });
+      const latestTotals = await getLatestTotals();
+      sendSSEUpdate(req, latestTotals);
+
+      res.json(createResponse(ResponseCodes.SUCCESS, "積分記錄刪除成功"));
     } else {
-      res.status(404).json({ message: "Score not found" });
+      res.status(404).json(createResponse(ResponseCodes.NOT_FOUND, "找不到該積分記錄"));
     }
   } catch (error) {
-    console.error("Error deleting score record:", error);
-    res.status(500).json({ message: "Error deleting score record" });
+    console.error("刪除積分記錄時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "刪除積分記錄時發生錯誤"));
   }
 };
 
@@ -178,60 +203,66 @@ exports.restoreScoreRecord = async (req, res) => {
   try {
     const score = await Score.findByIdAndUpdate(req.params.id, { isDeleted: false }, { new: true });
     if (score) {
-      res.json({ message: "積分記錄已復原", data: score });
+      const latestTotals = await getLatestTotals();
+      sendSSEUpdate(req, latestTotals);
+
+      res.json(createResponse(ResponseCodes.SUCCESS, "積分記錄恢復成功", score));
     } else {
-      res.status(404).json({ message: "找不到該積分記錄" });
+      res.status(404).json(createResponse(ResponseCodes.NOT_FOUND, "找不到該積分記錄"));
     }
   } catch (error) {
-    res.status(500).json({ message: "復原積分記錄時發生錯誤", error });
+    console.error("恢復積分記錄時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "恢復積分記錄時發生錯誤"));
   }
 };
 
 exports.getTotalScore = async (req, res) => {
   try {
     const totalScores = await getLatestTotals();
-    res.json(totalScores);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.json(createResponse(ResponseCodes.SUCCESS, "成功獲取總分", totalScores));
+  } catch (error) {
+    console.error("獲取總分時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "獲取總分時發生錯誤"));
   }
 };
 
 exports.getSignInHistory = async (req, res) => {
   try {
-    const SignIns = await SignIn.find().sort({ time: -1 });
-    res.json(SignIns);
+    const signIns = await SignIn.find().sort({ time: -1 });
+    res.json(createResponse(ResponseCodes.SUCCESS, "成功獲取登入歷史", signIns));
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("獲取登入歷史時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "獲取登入歷史時發生錯誤"));
   }
 };
 
 exports.getPendingUsers = async (req, res) => {
   try {
     const users = await Admin.find({ status: "pending" }, { password: 0 }).sort({ time: -1 });
-    res.json({ code: "0000", message: "成功", data: users });
+    res.json(createResponse(ResponseCodes.SUCCESS, "成功獲取待審核用戶列表", users));
   } catch (error) {
-    console.error("獲取用戶列表時發生錯誤:", error);
-    res.json({ code: "2001", message: "獲取用戶列表時發生錯誤", data: null });
+    console.error("獲取待審核用戶列表時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "獲取待審核用戶列表時發生錯誤"));
   }
 };
 
 exports.getActiveUsers = async (req, res) => {
   try {
     const users = await Admin.find({ status: "active" }, { password: 0 }).sort({ time: -1 });
-    res.json({ code: "0000", message: "成功", data: users });
+    res.json(createResponse(ResponseCodes.SUCCESS, "成功獲取活躍用戶列表", users));
   } catch (error) {
-    console.error("獲取用戶列表時發生錯誤:", error);
-    res.json({ code: "2001", message: "獲取用戶列表時發生錯誤", data: null });
+    console.error("獲取活躍用戶列表時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "獲取活躍用戶列表時發生錯誤"));
   }
 };
 
 exports.getBannedUsers = async (req, res) => {
   try {
     const users = await Admin.find({ status: "banned" }, { password: 0 }).sort({ time: -1 });
-    res.json({ code: "0000", message: "成功", data: users });
+    res.json(createResponse(ResponseCodes.SUCCESS, "成功獲取被封禁用戶列表", users));
   } catch (error) {
-    console.error("獲取用戶列表時發生錯誤:", error);
-    res.json({ code: "2001", message: "獲取用戶列表時發生錯誤", data: null });
+    console.error("獲取被封禁用戶列表時發生錯誤:", error);
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "獲取被封禁用戶列表時發生錯誤"));
   }
 };
 
@@ -240,14 +271,14 @@ exports.approveUser = async (req, res) => {
   try {
     const user = await Admin.findById(id);
     if (!user) {
-      return res.json({ code: "1001", message: "用戶不存在", data: null });
+      return res.status(404).json(createResponse(ResponseCodes.NOT_FOUND, "用戶不存在"));
     }
     user.status = "active";
     await user.save();
-    res.json({ code: "0000", message: "用戶審核通過", data: null });
+    res.json(createResponse(ResponseCodes.SUCCESS, "用戶審核通過"));
   } catch (error) {
     console.error("審核用戶時發生錯誤:", error);
-    res.json({ code: "2002", message: "審核用戶時發生錯誤", data: null });
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "審核用戶時發生錯誤"));
   }
 };
 
@@ -256,14 +287,14 @@ exports.banUser = async (req, res) => {
   try {
     const user = await Admin.findById(id);
     if (!user) {
-      return res.json({ code: "1001", message: "用戶不存在", data: null });
+      return res.status(404).json(createResponse(ResponseCodes.NOT_FOUND, "用戶不存在"));
     }
     user.status = "banned";
     await user.save();
-    res.json({ code: "0000", message: "用戶已被封禁", data: null });
+    res.json(createResponse(ResponseCodes.SUCCESS, "用戶已被封禁"));
   } catch (error) {
     console.error("封禁用戶時發生錯誤:", error);
-    res.json({ code: "2002", message: "封禁用戶時發生錯誤", data: null });
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "封禁用戶時發生錯誤"));
   }
 };
 
@@ -272,13 +303,13 @@ exports.unbanUser = async (req, res) => {
   try {
     const user = await Admin.findById(id);
     if (!user) {
-      return res.json({ code: "1001", message: "用戶不存在", data: null });
+      return res.status(404).json(createResponse(ResponseCodes.NOT_FOUND, "用戶不存在"));
     }
     user.status = "active";
     await user.save();
-    res.json({ code: "0000", message: "用戶已被解禁", data: null });
+    res.json(createResponse(ResponseCodes.SUCCESS, "用戶已被解禁"));
   } catch (error) {
     console.error("解禁用戶時發生錯誤:", error);
-    res.json({ code: "2002", message: "解禁用戶時發生錯誤", data: null });
+    res.status(500).json(createResponse(ResponseCodes.SERVER_ERROR, "解禁用戶時發生錯誤"));
   }
 };

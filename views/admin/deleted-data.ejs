@@ -123,7 +123,7 @@
     document.addEventListener("DOMContentLoaded", function () {
       fetch("/api/deleted-data")
         .then(response => response.json())
-        .then(data => {
+        .then(({ data }) => {
           const tableBody = document.querySelector("#tableBody");
           data.forEach(item => {
             const row = document.createElement("tr");

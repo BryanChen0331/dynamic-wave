@@ -8,7 +8,7 @@
   <style>
     html {
       min-width: 375px;
-    }    
+    }
 
     body {
       font-family: Arial, sans-serif;
@@ -159,6 +159,9 @@
   </div>
 
   <script>
+    const blueTotalElement = document.getElementById("blueTotal");
+    const yellowTotalElement = document.getElementById("yellowTotal");
+
     document.querySelector("#competitionForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -174,22 +177,42 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
+          redirect: "follow"
         });
 
-        if (response.ok) {
-          alert("資料提交成功。");
+        if (response.redirected) {
+          window.location.href = response.url;
+          return;
+        }
+
+        const { code, message, data: responseData } = await response.json();
+
+        if (code === "0000") {
+          console.log("提交的積分記錄:", responseData);
+          alert("積分提交成功");
+          updateTotals();
+          document.querySelector("#score").value = "";
         } else {
-          alert("資料提交失敗。");
+          console.error("積分提交失敗:", message);
+          alert(`積分提交失敗: ${message}`);
         }
       } catch (error) {
-        console.error("Error submitting score:", error);
-        alert("無法提交資料，請稍後再試。");
+        console.error("提交積分時發生錯誤:", error);
+        alert("無法提交積分，請稍後再試。");
       }
     });
 
-    const blueTotalElement = document.getElementById("blueTotal");
-    const yellowTotalElement = document.getElementById("yellowTotal");
+    function updateTotals() {
+      fetch("/api/total-score")
+        .then(response => response.json())
+        .then(({ data }) => {
+          blueTotalElement.textContent = data.blueTotal;
+          yellowTotalElement.textContent = data.yellowTotal;
+        });
+    }
+
+    updateTotals();
 
     const eventSource = new EventSource("/sse");
 
@@ -199,12 +222,10 @@
       yellowTotalElement.textContent = totals.yellowTotal;
     };
 
-    fetch("/api/total-score")
-      .then(response => response.json())
-      .then(totals => {
-        blueTotalElement.textContent = totals.blueTotal;
-        yellowTotalElement.textContent = totals.yellowTotal;
-      });
+    eventSource.onerror = function (error) {
+      console.error("SSE 連接錯誤:", error);
+      eventSource.close();
+    };
   </script>
 </body>
 
