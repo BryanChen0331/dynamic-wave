@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>測驗資料</title>
+  <title>已刪除測驗資料</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -48,7 +48,7 @@
 
     button {
       padding: 5px 10px;
-      background-color: #dc3545;
+      background-color: #28a745;
       color: white;
       border: none;
       cursor: pointer;
@@ -56,7 +56,7 @@
     }
 
     button:hover {
-      background-color: #c82333;
+      background-color: #218838;;
     }
 
     .button-container {
@@ -89,9 +89,9 @@
 </head>
 
 <body>
-  <h1>測驗資料</h1>
+  <h1>已刪除測驗資料</h1>
   <div class="button-container">
-    <button onclick="window.location.href='/admin/deleted-data'">查看已刪除測驗資料</button>
+    <button onclick="window.location.href='/admin/data'">查看測驗資料</button>
     <button onclick="window.location.href='/admin'">回後台首頁</button>
   </div>
   <table id="dataTable">
@@ -108,7 +108,7 @@
         <th>角色</th>
         <th>隊伍</th>
         <th>時間</th>
-        <th></th>
+        <th>操作</th>
       </tr>
     </thead>
     <tbody id="tableBody">
@@ -117,7 +117,7 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      fetch("/api/data")
+      fetch("/api/deleted-data")
         .then(response => response.json())
         .then(data => {
           const tableBody = document.querySelector("#tableBody");
@@ -144,11 +144,8 @@
                 hour12: false
               }).replace(/(\d{2})\/(\d{2})\/(\d{4}),/, "$3-$1-$2")}
               </td>
-              <td><button class="delete" onclick="deleteData('${item._id}')">刪除</button></td>
+              <td><button class="restore" onclick="restoreData('${item._id}')">復原</button></td>
             `;
-            if (item.deleted) {
-              row.classList.add("deleted");
-            }
             tableBody.appendChild(row);
           });
         })
@@ -158,25 +155,24 @@
         });
     });
 
-    function deleteData(id) {
-      if (confirm("確定要刪除這筆測驗資料嗎？")) {
-        fetch(`/api/data/${id}`, {
+    function restoreData(id) {
+      if (confirm("確定要復原這筆測驗資料嗎？")) {
+        fetch(`/api/restore-data/${id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ deleted: true })
+          }
         })
           .then(response => {
             if (response.ok) {
               location.reload();
             } else {
-              alert("Failed to delete the data.");
+              alert("Failed to restore the data.");
             }
           })
           .catch(error => {
-            console.error("Error deleting the data:", error);
-            alert("無法刪除測驗資料，請稍後再試。");
+            console.error("Error restoring the data:", error);
+            alert("無法復原測驗資料，請稍後再試。");
           });
       }
     }

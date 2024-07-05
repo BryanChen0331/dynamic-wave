@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>測驗資料</title>
+  <title>用戶管理</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -89,51 +89,41 @@
 </head>
 
 <body>
-  <h1>測驗資料</h1>
-  <div class="button-container">
-    <button onclick="window.location.href='/admin/deleted-data'">查看已刪除測驗資料</button>
-    <button onclick="window.location.href='/admin'">回後台首頁</button>
+  <div class="container">
+    <div class="header">
+      <h1>用戶管理</h1>
+      <div>
+        <button onclick="window.location.href='/admin/user/pending-user'">查看待審核用戶</button>
+        <button onclick="window.location.href='/admin/user/banned-user'">查看封禁用戶</button>
+        <button onclick="window.location.href='/admin'">回後台首頁</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>用戶名</th>
+          <th>權限</th>
+          <th>狀態</th>
+          <th>註冊時間</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="userTableBody">
+      </tbody>
+    </table>
   </div>
-  <table id="dataTable">
-    <thead>
-      <tr>
-        <th>用戶名</th>
-        <th>選項</th>
-        <th>冒險</th>
-        <th>社交</th>
-        <th>創造力</th>
-        <th>策略</th>
-        <th>情感</th>
-        <th>直覺</th>
-        <th>角色</th>
-        <th>隊伍</th>
-        <th>時間</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="tableBody">
-    </tbody>
-  </table>
-
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      fetch("/api/data")
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch("/api/user/active")
         .then(response => response.json())
-        .then(data => {
-          const tableBody = document.querySelector("#tableBody");
+        .then(({ data }) => {
+          const userTableBody = document.querySelector("#userTableBody");
           data.forEach(item => {
             const row = document.createElement("tr");
             row.innerHTML = `
               <td>${item.username}</td>
-              <td>${item.options.join(", ")}</td>
-              <td>${item.attributes.adventure}</td>
-              <td>${item.attributes.social}</td>
-              <td>${item.attributes.creativity}</td>
-              <td>${item.attributes.strategy}</td>
-              <td>${item.attributes.emotion}</td>
-              <td>${item.attributes.intuition}</td>
-              <td>${item.character}</td>
-              <td>${item.team}</td>
+              <td>${item.permission}</td>
+              <td>${item.status}</td>
               <td>${new Date(item.time).toLocaleString("en-US", {
                 year: "numeric",
                 month: "2-digit",
@@ -144,41 +134,28 @@
                 hour12: false
               }).replace(/(\d{2})\/(\d{2})\/(\d{4}),/, "$3-$1-$2")}
               </td>
-              <td><button class="delete" onclick="deleteData('${item._id}')">刪除</button></td>
+              <td>
+                ${item.permission !== "manager" ? `<button onclick="banUser('${item._id}')">封禁</button>` : ''}
+              </td>
             `;
-            if (item.deleted) {
-              row.classList.add("deleted");
-            }
-            tableBody.appendChild(row);
+            userTableBody.appendChild(row);
           });
         })
         .catch(error => {
-          console.error("Error fetching data:", error);
-          alert("測驗資料抓取失敗，請稍後再試。");
+          console.error("獲取用戶列表時發生錯誤:", error);
         });
     });
 
-    function deleteData(id) {
-      if (confirm("確定要刪除這筆測驗資料嗎？")) {
-        fetch(`/api/data/${id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ deleted: true })
+    function banUser(userId) {
+      fetch(`/api/user/ban/${userId}`, { method: "POST" })
+        .then(response => response.json())
+        .then(({ message }) => {
+          alert(message);
+          location.reload();
         })
-          .then(response => {
-            if (response.ok) {
-              location.reload();
-            } else {
-              alert("Failed to delete the data.");
-            }
-          })
-          .catch(error => {
-            console.error("Error deleting the data:", error);
-            alert("無法刪除測驗資料，請稍後再試。");
-          });
-      }
+        .catch(error => {
+          console.error("封禁用戶時發生錯誤:", error);
+        });
     }
   </script>
 </body>

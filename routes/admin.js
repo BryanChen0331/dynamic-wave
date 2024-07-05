@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
-const checkSessionMiddleware = require("../middlewares/authMiddleware");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 router.get("/sign-up", adminController.signUpPage);
 
@@ -11,16 +11,26 @@ router.get("/sign-in", adminController.signInPage);
 
 router.post("/sign-in", adminController.signIn);
 
-router.get("/", checkSessionMiddleware, adminController.dashboard);
+router.get("/", authMiddleware.requireSignInMiddleware, adminController.dashboard);
 
-router.get("/competition", checkSessionMiddleware, adminController.competition);
+router.get("/competition", authMiddleware.requireSignInMiddleware, adminController.competition);
 
-router.get("/data", checkSessionMiddleware, adminController.data);
+router.get("/data", authMiddleware.requireSignInMiddleware, authMiddleware.requireManagerMiddleware, adminController.data);
 
-router.get("/score", checkSessionMiddleware, adminController.score);
+router.get("/deleted-data", authMiddleware.requireSignInMiddleware, authMiddleware.requireManagerMiddleware, adminController.deletedData);
 
-router.get("/sign-in-history", checkSessionMiddleware, adminController.signInHistory);
+router.get("/score", authMiddleware.requireSignInMiddleware, adminController.score);
 
-router.post("/sign-out", checkSessionMiddleware, adminController.signOut);
+router.get("/deleted-score", authMiddleware.requireSignInMiddleware, authMiddleware.requireManagerMiddleware, adminController.deletedScore);
+
+router.get("/sign-in-history", authMiddleware.requireSignInMiddleware, authMiddleware.requireManagerMiddleware, adminController.signInHistory);
+
+router.get("/user/active-user", authMiddleware.requireSignInMiddleware, authMiddleware.requireManagerMiddleware, adminController.activeUser);
+
+router.get("/user/pending-user", authMiddleware.requireSignInMiddleware, authMiddleware.requireManagerMiddleware, adminController.pendingUser);
+
+router.get("/user/banned-user", authMiddleware.requireSignInMiddleware, authMiddleware.requireManagerMiddleware, adminController.bannedUser);
+
+router.post("/sign-out", authMiddleware.requireSignInMiddleware, adminController.signOut);
 
 module.exports = router;

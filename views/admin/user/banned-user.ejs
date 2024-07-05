@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>積分紀錄</title>
+  <title>用戶管理</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -48,7 +48,7 @@
 
     button {
       padding: 5px 10px;
-      background-color: #dc3545;
+      background-color: #28a745;
       color: white;
       border: none;
       cursor: pointer;
@@ -56,7 +56,7 @@
     }
 
     button:hover {
-      background-color: #c82333;
+      background-color: #218838;
     }
 
     .button-container {
@@ -89,43 +89,41 @@
 </head>
 
 <body>
-  <h1>積分紀錄</h1>
-  <div class="button-container">
-    <% if (permission === "manager") { %>
-      <button onclick="window.location.href='/admin/deleted-score'">查看已刪除資料</button>
-    <% } %>
-    <button onclick="window.location.href='/admin'">回後台首頁</button>
-  </div>
-  <table id="logTable">
-    <thead>
-      <tr>
-        <th>競賽項目</th>
-        <th>隊伍</th>
-        <th>分數</th>
-        <th>時間</th>
-        <% if (permission === "manager") { %>
+  <div class="container">
+    <div class="header">
+      <h1>用戶管理</h1>
+      <div>
+        <button onclick="window.location.href='/admin/user/active-user'">查看用戶</button>
+        <button onclick="window.location.href='/admin/user/pending-user'">查看待審核用戶</button>
+        <button onclick="window.location.href='/admin'">回後台首頁</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>用戶名</th>
+          <th>權限</th>
+          <th>狀態</th>
+          <th>註冊時間</th>
           <th>操作</th>
-        <% } %>
-      </tr>
-    </thead>
-    <tbody id="tableBody">
-    </tbody>
-  </table>
-
+        </tr>
+      </thead>
+      <tbody id="userTableBody">
+      </tbody>
+    </table>
+  </div>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const permission = "<%= permission %>"
-
-      fetch("/api/score-record")
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch("/api/user/banned")
         .then(response => response.json())
-        .then(data => {
-          const tableBody = document.querySelector("#tableBody");
+        .then(({ data }) => {
+          const userTableBody = document.querySelector("#userTableBody");
           data.forEach(item => {
             const row = document.createElement("tr");
             row.innerHTML = `
-              <td>${item.competition}</td>
-              <td>${item.team}</td>
-              <td>${item.score}</td>
+              <td>${item.username}</td>
+              <td>${item.permission}</td>
+              <td>${item.status}</td>
               <td>${new Date(item.time).toLocaleString("en-US", {
                 year: "numeric",
                 month: "2-digit",
@@ -136,41 +134,30 @@
                 hour12: false
               }).replace(/(\d{2})\/(\d{2})\/(\d{4}),/, "$3-$1-$2")}
               </td>
-              ${permission === "manager" ? `<td><button onclick="confirmDelete('${item._id}')">刪除</button></td>` : ""}
+              <td>
+                ${item.permission !== "manager" ? `<button onclick="unbanUser('${item._id}')">解除封禁</button>` : ''}
+              </td>
             `;
-            tableBody.appendChild(row);
+            userTableBody.appendChild(row);
           });
         })
         .catch(error => {
-          console.error("Error fetching log data:", error);
-          alert("無法獲取資料。請稍後再試。");
+          console.error("獲取用戶列表時發生錯誤:", error);
         });
     });
 
-    function confirmDelete(id) {
-      if (confirm("確定要刪除這筆資料嗎？")) {
-        deleteScore(id);
-      }
-    }
-
-    function deleteScore(id) {
-      fetch(`/api/score-record/${id}`, {
-        method: "PATCH"
-      })
-        .then(response => {
-          if (response.ok) {
-            location.reload();
-          } else {
-            alert("Failed to delete the data.");
-          }
+    function unbanUser(userId) {
+      fetch(`/api/user/unban/${userId}`, { method: "POST" })
+        .then(response => response.json())
+        .then(({ message }) => {
+          alert(message);
+          location.reload();
         })
         .catch(error => {
-          console.error("Error deleting the score:", error);
-          alert("無法刪除資料。請稍後再試。");
+          console.error("解除封禁用戶時發生錯誤:", error);
         });
     }
   </script>
-
 </body>
 
 </html>

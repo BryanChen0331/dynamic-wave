@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>測驗資料</title>
+  <title>已刪除積分紀錄</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -48,7 +48,7 @@
 
     button {
       padding: 5px 10px;
-      background-color: #dc3545;
+      background-color: #28a745;
       color: white;
       border: none;
       cursor: pointer;
@@ -56,7 +56,7 @@
     }
 
     button:hover {
-      background-color: #c82333;
+      background-color: #218838;
     }
 
     .button-container {
@@ -89,51 +89,38 @@
 </head>
 
 <body>
-  <h1>測驗資料</h1>
+  <h1>已刪除積分紀錄</h1>
   <div class="button-container">
-    <button onclick="window.location.href='/admin/deleted-data'">查看已刪除測驗資料</button>
+    <button onclick="window.location.href='/admin/score'">查看積分紀錄</button>
     <button onclick="window.location.href='/admin'">回後台首頁</button>
   </div>
-  <table id="dataTable">
+  <table id="deletedLogTable">
     <thead>
       <tr>
-        <th>用戶名</th>
-        <th>選項</th>
-        <th>冒險</th>
-        <th>社交</th>
-        <th>創造力</th>
-        <th>策略</th>
-        <th>情感</th>
-        <th>直覺</th>
-        <th>角色</th>
+        <th>競賽項目</th>
         <th>隊伍</th>
+        <th>分數</th>
         <th>時間</th>
-        <th></th>
+        <th>操作</th>
       </tr>
     </thead>
-    <tbody id="tableBody">
+    <tbody id="deletedTableBody">
     </tbody>
   </table>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      fetch("/api/data")
+      fetch("/api/deleted-score-record")
         .then(response => response.json())
+        .then(result => result.data)
         .then(data => {
-          const tableBody = document.querySelector("#tableBody");
+          const tableBody = document.querySelector("#deletedTableBody");
           data.forEach(item => {
             const row = document.createElement("tr");
             row.innerHTML = `
-              <td>${item.username}</td>
-              <td>${item.options.join(", ")}</td>
-              <td>${item.attributes.adventure}</td>
-              <td>${item.attributes.social}</td>
-              <td>${item.attributes.creativity}</td>
-              <td>${item.attributes.strategy}</td>
-              <td>${item.attributes.emotion}</td>
-              <td>${item.attributes.intuition}</td>
-              <td>${item.character}</td>
+              <td>${item.competition}</td>
               <td>${item.team}</td>
+              <td>${item.score}</td>
               <td>${new Date(item.time).toLocaleString("en-US", {
                 year: "numeric",
                 month: "2-digit",
@@ -144,43 +131,35 @@
                 hour12: false
               }).replace(/(\d{2})\/(\d{2})\/(\d{4}),/, "$3-$1-$2")}
               </td>
-              <td><button class="delete" onclick="deleteData('${item._id}')">刪除</button></td>
+              <td><button onclick="restoreScore('${item._id}')">復原</button></td>
             `;
-            if (item.deleted) {
-              row.classList.add("deleted");
-            }
             tableBody.appendChild(row);
           });
         })
         .catch(error => {
-          console.error("Error fetching data:", error);
-          alert("測驗資料抓取失敗，請稍後再試。");
+          console.error("Error fetching deleted log data:", error);
+          alert("無法獲取已刪除資料。請稍後再試。");
         });
     });
 
-    function deleteData(id) {
-      if (confirm("確定要刪除這筆測驗資料嗎？")) {
-        fetch(`/api/data/${id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ deleted: true })
+    function restoreScore(id) {
+      fetch(`/api/restore-score-record/${id}`, {
+        method: "PATCH"
+      })
+        .then(response => {
+          if (response.ok) {
+            location.reload();
+          } else {
+            alert("Failed to restore the data.");
+          }
         })
-          .then(response => {
-            if (response.ok) {
-              location.reload();
-            } else {
-              alert("Failed to delete the data.");
-            }
-          })
-          .catch(error => {
-            console.error("Error deleting the data:", error);
-            alert("無法刪除測驗資料，請稍後再試。");
-          });
-      }
+        .catch(error => {
+          console.error("Error restoring the score:", error);
+          alert("無法復原資料。請稍後再試。");
+        });
     }
   </script>
+
 </body>
 
 </html>

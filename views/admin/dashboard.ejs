@@ -71,9 +71,12 @@
   <div class="container">
     <h1>後台首頁</h1>
     <button onclick="location.href='/admin/competition'">競賽活動</button>
-    <button onclick="location.href='/admin/data'">測驗資料</button>
     <button onclick="location.href='/admin/score'">積分紀錄</button>
-    <button onclick="location.href='/admin/sign-in-history'">登入紀錄</button>
+    <% if (permission === "manager") { %>
+      <button onclick="location.href='/admin/data'">測驗資料</button>
+      <button onclick="location.href='/admin/sign-in-history'">登入紀錄</button>
+      <button onclick="location.href='/admin/user/active-user'">用戶管理</button>
+    <% } %>
     <hr>
     <button id="sign-out-btn">登出</button>
   </div>

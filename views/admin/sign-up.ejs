@@ -88,7 +88,7 @@
 <body>
   <div class="container">
     <h1>管理員註冊</h1>
-    <form id="sign-up-form" action="/admin/sign-up" method="post">
+    <form id="sign-up-form">
       <div class="form-group">
         <label for="username">用戶名:</label>
         <input id="username" type="text" name="username" required>
@@ -109,30 +109,46 @@
     </form>
   </div>
   <script>
-    document.getElementById("sign-up-form").addEventListener("submit", function (event) {
+    document.getElementById("sign-up-form").addEventListener("submit", async function (event) {
       event.preventDefault();
       const username = event.target.username.value;
       const password = event.target.password.value;
       const confirmPassword = event.target["confirm-password"].value;
       let errorMessage = "";
 
-      if (username.length < 4) {
-        errorMessage = "用戶名至少要有4個字符。";
+      if (username.length < 4 && !errorMessage) {
+        errorMessage = "用戶名至少要有4個字元。";
       }
 
       const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-      if (!passwordRegex.test(password)) {
-        errorMessage = "密碼必須至少有8個字符，並包含英文字母和數字。";
+      if (!passwordRegex.test(password) && !errorMessage) {
+        errorMessage = "密碼必須至少有8個字元，並包含英文字母和數字。";
       }
 
-      if (password !== confirmPassword) {
+      if (password !== confirmPassword && !errorMessage) {
         errorMessage = "兩次輸入的密碼不一致。";
       }
 
       if (errorMessage) {
         document.getElementById("error-message").innerText = errorMessage;
+        return;
+      }
+
+      const response = await fetch('/admin/sign-up', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      });
+
+      const result = await response.json();
+
+      if (result.code !== '0000') {
+        document.getElementById("error-message").innerText = result.message;
       } else {
-        event.target.submit();
+        alert(result.message);
+        window.location.href = '/admin/sign-in';
       }
     });
   </script>
