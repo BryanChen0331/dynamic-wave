@@ -166,6 +166,7 @@ p {
   position: relative;
   margin-top: 20%;
   overflow: hidden;
+  cursor: pointer;
 }
 
 #score-panel {
@@ -181,7 +182,6 @@ p {
     transform: rotate(360deg);
   }
 }
-
 
 .vortex {
   position: absolute;
