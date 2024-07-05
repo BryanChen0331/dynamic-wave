@@ -87,6 +87,31 @@
     #totals p {
       margin: 5px 0;
     }
+
+    hr {
+      margin: 20px 0;
+      border: none;
+      border-top: 1px solid #ccc;
+    }
+
+    .back-button {
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    .back-button button {
+      background-color: #28a745;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-button button:hover {
+      background-color: #218838;
+    }
   </style>
 </head>
 
@@ -122,6 +147,10 @@
       <h2>即時比分</h2>
       <p>藍隊: <span id="blueTotal">0</span></p>
       <p>黃隊: <span id="yellowTotal">0</span></p>
+    </div>
+    <hr>
+    <div class="back-button">
+      <button onclick="window.location.href='/admin'">回後台首頁</button>
     </div>
   </div>
 
