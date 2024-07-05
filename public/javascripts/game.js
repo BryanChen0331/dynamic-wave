@@ -74,15 +74,35 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function fetchQuestions() {
-    const response = await fetch("/api/question");
-    const data = await response.json();
-    questions = data;
+    try {
+      const response = await fetch("/api/question");
+      const { code, message, data } = await response.json();
+      if (code === "0000") {
+        questions = data;
+      } else {
+        console.error("獲取問題失敗:", message);
+        throw new Error(message);
+      }
+    } catch (error) {
+      console.error("獲取問題時發生錯誤:", error);
+      throw error;
+    }
   }
 
   async function fetchBlueRatio() {
-    const response = await fetch("/api/blue-ratio");
-    const data = await response.json();
-    return data.blueRatio;
+    try {
+      const response = await fetch("/api/blue-ratio");
+      const { code, message, data } = await response.json();
+      if (code === "0000") {
+        return data.blueRatio;
+      } else {
+        console.error("獲取藍隊比例失敗:", message);
+        throw new Error(message);
+      }
+    } catch (error) {
+      console.error("獲取藍隊比例時發生錯誤:", error);
+      throw error;
+    }
   }
 
   async function generateCharacter(attributes) {
@@ -283,7 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function fn4() {
-    $btn3.removeEventListener("click", fn4);
+    // $btn3.removeEventListener("click", fn4);
 
     const characterCode = await generateCharacter(attributes);
     character = CharacterNames[characterCode - 1];
@@ -375,20 +395,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
   $bg.addEventListener("play", setBgAsBottomLayer);
   $sound.addEventListener("click", debounceToggleMute);
-  $btn7.addEventListener("click", () => {
+  $btn7.onclick = function () {
+    this.onclick = null;
     fn3();
-  });
-  $btn1.addEventListener("click", () => {
-    $bgm1.play();
+  };
+  $btn1.onclick = function () {
+    this.onclick = null;
     $bgm2.play();
     $bgm2.ontimeupdate = () => {
       if ($bgm2.currentTime > 0.1) {
         $bgm2.ontimeupdate = null;
+        $bgm1.play();
         fn1();
       }
     };
-  });
-  $btn2.addEventListener("click", () => {
+  };
+  $btn2.onclick = function () {
+    this.onclick = null;
     $bgm2.play();
     $bgm2.ontimeupdate = () => {
       if ($bgm2.currentTime > 0.1) {
@@ -396,11 +419,17 @@ document.addEventListener("DOMContentLoaded", function () {
         fn2();
       }
     };
-  });
-  $btn3.addEventListener("click", () => {
+  };
+  $btn3.onclick = () => {
+    $btn3.onclick = null;
     $bgm5.play();
-  });
-  $btn3.addEventListener("click", fn4);
+    $bgm5.ontimeupdate = () => {
+      if ($bgm5.currentTime > 0.1) {
+        $bgm5.ontimeupdate = null;
+        fn4();
+      }
+    };
+  };
   $btn4.addEventListener("click", () => {
     $bgm2.play();
     $bgm2.onended = () => {
@@ -411,7 +440,8 @@ document.addEventListener("DOMContentLoaded", function () {
     $bgm2.play();
     debounceShareImage();
   });
-  $btn6.addEventListener("click", () => {
+  $btn6.onclick = function () {
+    this.onclick = null;
     $bgm2.play();
     $bgm2.ontimeupdate = () => {
       if ($bgm2.currentTime > 0.1) {
@@ -420,7 +450,7 @@ document.addEventListener("DOMContentLoaded", function () {
         toggleVisibility($btn6);
       }
     };
-  });
+  };
   $opBtn1.addEventListener("click", () => nextQuestion(0));
   $opBtn2.addEventListener("click", () => nextQuestion(1));
   $opBtn3.addEventListener("click", () => nextQuestion(2));
@@ -446,7 +476,5 @@ document.addEventListener("DOMContentLoaded", function () {
   $bg.style.visibility = "visible";
   toggleVisibility($text1);
   toggleVisibility($btn1);
-  $result.width = "300px";
-  $result.height = "150px";
   fetchQuestions();
 });
