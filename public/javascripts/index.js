@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function updateTotalScores(totals) {
     if (typeof (totals.blueTotal) === "number" && typeof (totals.yellowTotal) === "number") {
       if (parseInt($blueScore.innerHTML) !== totals.blueTotal) {
-        blueAnimationQueue.add($blueScore, totals.blueTotal, 3000);
+        blueAnimationQueue.add($blueScore, totals.blueTotal, 1000);
       }
       if (parseInt($yellowScore.innerHTML) !== totals.yellowTotal) {
         yellowAnimationQueue.add($yellowScore, totals.yellowTotal, 3000);
