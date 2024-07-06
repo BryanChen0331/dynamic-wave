@@ -103,6 +103,7 @@
   <table id="logTable">
     <thead>
       <tr>
+        <th>提交者</th>
         <th>競賽項目</th>
         <th>隊伍</th>
         <th>分數</th>
@@ -127,6 +128,7 @@
           data.forEach(item => {
             const row = document.createElement("tr");
             row.innerHTML = `
+              <td>${item.submittedBy}</td>
               <td>${item.competition}</td>
               <td>${item.team}</td>
               <td>${item.score}</td>
